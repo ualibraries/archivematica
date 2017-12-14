@@ -1,0 +1,11 @@
+# dbconfig-common system-wide configuration options
+
+# dbc_remember_admin_pass: should we cache administrative passwords?
+#	set to "true" to keep admin passwords cached in debconf
+dbc_remember_admin_pass='false'
+
+# dbc_remote_questions_default: will we be likely to install on remote servers?
+#	set to "true" to raise the priority of debconf questions related to
+#   database installation on remote servers (for database types that support this)
+dbc_remote_questions_default='false'
+
