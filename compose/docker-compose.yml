@@ -2,6 +2,7 @@ version: '2'
 services:
   web:
     build: ./web
+    restart: always
     tty: true
     links:
       - fpm
@@ -31,6 +32,7 @@ services:
 
   fpm:
     build: ./fpm
+    restart: always
     links:
       - db-host
     environment:
@@ -41,7 +43,7 @@ services:
       - simplesaml:/opt/simplesamlphp
 
   shib:
-    image: 'dockerepo.library.arizona.edu:5000/debian-shibboleth:stretch-1.0'
+    build: ./shib
     restart: always
     volumes:
       - /etc/shibboleth:/etc/shibboleth
