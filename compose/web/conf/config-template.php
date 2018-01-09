@@ -9,14 +9,14 @@
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  * 
- * *	Redistributions of source code must retain the above copyright
- * 	notice, this list of conditions and the following disclaimer.
- * *	Redistributions in binary form must reproduce the above copyright
- * 	notice, this list of conditions and the following disclaimer in the
- * 	documentation and/or other materials provided with the distribution.
- * *	Neither the name of AARNet, Belnet, HEAnet, SURFnet and UNINETT nor the
- * 	names of its contributors may be used to endorse or promote products
- * 	derived from this software without specific prior written permission.
+ * *    Redistributions of source code must retain the above copyright
+ *     notice, this list of conditions and the following disclaimer.
+ * *    Redistributions in binary form must reproduce the above copyright
+ *     notice, this list of conditions and the following disclaimer in the
+ *     documentation and/or other materials provided with the distribution.
+ * *    Neither the name of AARNet, Belnet, HEAnet, SURFnet and UNINETT nor the
+ *     names of its contributors may be used to endorse or promote products
+ *     derived from this software without specific prior written permission.
  * 
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
@@ -30,409 +30,275 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-class config {
-
-private static $instance = NULL;
-
-	public static function getInstance() {
-		// Check for both equality and type
-		if(self::$instance === NULL) {
-			self::$instance = new self();
-		}
-		return self::$instance;
-	}
-
-public function loadConfig() {
-
-	$config = array();
-
-	// Start of configurable settings
-	// For more information about these settings please see the
-	// Administrator Reference Manual in the documentation section
-	// at www.filesender.org
-
-	// General settings
-	$config['admin'] = '{ADMIN_USERS}'; // UID's (from $config['saml_uid_attribute']) that have Administrator permissions
-	$config['adminEmail'] = ''; // Email address(es, separated by ,) to receive administrative messages (low disk space warning)
-	$config['Default_TimeZone'] = 'Europe/Vilnius';
-	$config['site_defaultlanguage'] = 'en_AU'; // for available languages see the ./language directory
-	$config['site_name'] = 'FileSender'; // Friendly name used for your FileSender instance
-
-	// UI Settings
-	$config['datedisplayformat'] = "Y-m-d"; // Format for displaying date/time, use PHP date() format string syntax
-	$config["versionNumber"] = true; // Show version number (true/false)
-	$config['site_showStats'] = false; // Show site upload/download stats (true/false)
-	$config['displayUserName'] = true; // Show 'Welcome user' (true/false)
-    
-	// auto complete - provides auto complete in input field for emails
-	$config["autocomplete"] = true;
-	$config["autocompleteHistoryMax"] = ""; // "" - unlimited or integer, number of results displayed in autocomplete
-
-	// debug settings
-	$config["debug"] = false; // Debug logging on/off (true/false)
-	$config["displayerrors"] = false; // Display debug errors on screen (true/false)
-	$config['dnslookup'] = true; // log includes DNS lookup (true/false)
-	$config["client_specific_logging"] = false; // client logging (true/false)
-	$config["client_specific_logging_uids"] = ""; // "" is log all clients, or log for specific userid's or voucheruid's seperated by comma 'xxxx,zzzzz'
-
-	// saml settings
-	$config['saml_email_attribute'] = "{SAML_MAIL_ATTR}"; // Attribute used for email address
-	$config['saml_name_attribute'] = "{SAML_NAME_ATTR}"; // Attribute used to get the user's name
-	$config['saml_uid_attribute'] = "{SAML_UID_ATTR}"; // Attribute to uniquely identify the user
-
-	//$config['saml_email_attribute'] = "urn:oid:0.9.2342.19200300.100.1.3"; // Attribute used for email address
-	//$config['saml_name_attribute'] = "urn:oid:2.16.840.1.113730.3.1.241"; // Attribute used to get the user's name
-	//$config['saml_uid_attribute'] = "urn:oid:0.9.2342.19200300.100.1.1"; // Attribute to uniquely identify the user
+// ---------------------------------------------
+//             README / 2014-09-11
+// ---------------------------------------------
+// 
+// This is a sample of configuration file for Filesender
+// --
+// The configuration list is available at [todo: wiki URL]
+//
+// To make filesender work, you need first to create a file 'config/config.php',
+// and at least to fill the following configuration parameters:
 
 
-	//$config['saml_email_attribute'] = 'mail'; // Attribute used for email address
-	//$config['saml_name_attribute'] = 'cn'; // Attribute used to get the user's name
-	//$config['saml_uid_attribute'] = 'eduPersonTargetedID'; // Attribute to uniquely identify the user
+// ---------------------------------------------
+//              General settings
+// ---------------------------------------------
+// 
+$config['site_url'] = 'https://{FILESENDER_DOMAIN}/';                // String, URL of the application
+// 
+$config['admin'] = 'admin';            // String, UID's (from  $config['saml_uid_attribute']) 
+                                    // that have Administrator permissions
+$config['admin_email'] ='glbrimhall@email.arizona.edu';       // String, email  address(es, separated by ,) 
+                                    			// to receive administrative messages (low disk  space warning)
 
-	// AuP settings
-	$config["AuP_default"] = false; //AuP value is already ticked
-	$config["AuP"] = false; // AuP is displayed
+$config['session_cookie_path'] = '/';
 
-	// Server settings
-	$config['default_daysvalid'] = 20; // Maximum number of days before file/voucher is expired
-	$config['ban_extension'] = 'exe,bat'; // Possibly dangerous file extensions that are disallowed
-	$config["max_email_recipients"] = 100; // maximum email addresses allowed to send at once for voucher or file sending, a value of 0 allows unlimited emails.
-	$config['download_confirmation_to_downloader'] = true ; // send copy of download confirmation to downloader (true/false, default true)
 
-	$config['max_flash_upload_size'] = '2147483648'; // 2GB
-	$config['max_html5_upload_size'] = '107374182400'; // 100  GB
-	$config["upload_chunk_size"]  = '2000000';//
+// ---------------------------------------------
+//              Language settings
+// ---------------------------------------------
+$config['lang_browser_enabled'] = true;    				// default is false.  Shows language based on user's browser setting.
+$config['lang_selector_enabled'] = true;    				// default is false.  Enables explicit language selection in UI
+$config['lang_url_enabled'] = true;    				// default is false.  Needed to make lang_selector_enabled and lang_browser_enabled to work. Also needed to allow translation of emails. 
 
-	// update max_flash_upload_size if php.ini post_max_size and upload_max_filesize is set lower
-	$config['max_flash_upload_size'] = min(let_to_num(ini_get('post_max_size'))-2048, let_to_num(ini_get('upload_max_filesize')),$config['max_flash_upload_size']);
 
-	$config["server_drivespace_warning"] = 20; // as a percentage 20 = 20% space left on the storage drive
 
-	// Terasender (fast upload) settings
-	// - terasender (really fast uploads) uses html5 web workers to speed up file upload
-	// - effectively providing multi-threaded faster uploads
-	$config['terasender'] = false; // true/false
-	$config['terasenderadvanced'] = false; // true/false - terasender advanced - show advanced settings
-	$config['terasender_chunksize'] = 5;		// default (5) terasender chunk size in MB
-	$config['terasender_workerCount'] = 6;		// default (6) worker count
-	$config['terasender_jobsPerWorker'] = 1;	// default (1) jobs per worker
+// ---------------------------------------------
+//              Email settings
+// ---------------------------------------------
 
-	// Advanced server settings, do not change unless you have a very good reason.
-	$config['db_dateformat'] = "Y-m-d H:i:s"; // Date/Time format for PostgreSQL, use PHP date format specifier syntax
-	$config["crlf"] = "\n"; // for email CRLF can be changed to \r\n if required
-	$config['voucherRegEx'] = "'[a-zA-Z0-9]{8}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{12}'";
-	$config['voucherUIDLength'] = 36;
-	$config['emailRegEx'] = "[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?";
+$config['email_use_html'] = true;    				// true or false
+$config['email_from'] = 'no-reply@uninett.no';    		// either 'sender' or an email address
+$config['email_from_name'] = '{EMAIL_FROM}';	// pretty name with the From: address
+$config['email_reply_to'] ='sender';    			// either 'sender' or an email address
+// $config['email_reply_to_name'] = 'pretty name';    		// pretty name in case email_reply_to is a configured email address
+$config['email_return_path'] = '{EMAIL_REPLY}';				// either 'sender' or an email address
+$config['email_newline'] = "\r\n";				// if emails are mangled replace this with \n.  Make sure to put it in double quotes!!
 
-	// site URL settings
-	if ( isset($_SERVER['SERVER_NAME']) ) {
-	$prot =  isset($_SERVER['HTTPS']) ? 'https://' : 'http://';
-	//$config['site_url'] = $prot . $_SERVER['SERVER_NAME'] . '/filesender/'; // URL to Filesender
-	$config['site_url'] = $prot . $_SERVER['SERVER_NAME'] . '/'; // URL to Filesender
-	$config['site_simplesamlurl'] =  $prot . $_SERVER['SERVER_NAME'] . '/simplesaml/';
-	$config['site_authenticationSource'] ="default-sp";
-	$config['site_logouturl'] = $config['site_url'] . '?s=logout';
-	}
-	$config['forceSSL'] = isset($_SERVER['HTTPS']); // Always use SSL (true/false)
 
-	// Support links
-	$config['aboutURL'] = "";
-	$config['helpURL'] = "";
 
-	// (absolute) file locations
-	$config['site_filestore'] = '/opt/filesender/files/';
-	$config['site_temp_filestore'] = '/opt/filesender/tmp/';
-	$config['site_simplesamllocation'] = '/opt/simplesamlphp/';
-	$config['log_location'] = '/opt/filesender/log/';
+// --------------------------------------------------
+//              Web UI settings
+// --------------------------------------------------
 
-	$config["db_type"] = "mysql";// pgsql or mysql
-	$config['db_host'] = '{DB_HOST}';
-	$config['db_database'] = '{DB_NAME}';
-	$config['db_port'] = '3306';
-	// database username and password
-	$config['db_username'] = '{DB_USER}';
-	$config['db_password'] = '{DB_PASSWORD}';
+$config['force_legacy_mode'] = false;			// for testing legacy non-HTML5 mode
 
-	//Optional DSN format overides db_ settings
-	//$config['dsn'] = "pgsql:host=localhost;dbname=filesender";
-	//$config['dsn'] = 'pgsql:host=localhost;dbname=filesender';
-	//$config['dsn'] = 'sqlite:/opt/filesender/db/filesender.sqlite';
-	//$config['dsn_driver_options'] = array();
-	// dsn requires username and password in $config['db_username'] and $config['db_password']
+$config['autocomplete'] = 10;					// show previously used email addresses in To: fields.  Set to positive number to enable.  Number indicates how many hits are shown to user.  Addresses are stored in user preferences.  When you sent to another set of recipients, will remove from list and add them at beginning of list.  So the more you write to them the longer they stay.  The longer you don't write to someone the lower they get on the list until they drop off.  Seems to work pretty well at RENATER.  
+$config['autocomplete_max_pool'] = 1;				// how many values are stored in database.  Default is 5.
+$config['autocomplete_min_characters'] = 2;		// Optional.  Default 3.  How many characters to type before autocomplete list is triggered 
+$config['upload_display_bits_per_sec'] = false;		
 
-	// cron settings
-	$config['cron_exclude prefix'] = '_'; // exclude deletion of files with the prefix character listed (can use multiple characters eg '._' will ignore .xxxx and _xxxx
-	$config['cron_shred'] = false; // instead of simply unlinking, overwrite expired files so they are hard to recover
-	$config['cron_shred_command'] = '/usr/bin/shred -f -u -n 1 -z'; // overwrite once (-n 1) with random data, once with zeros (-z), then remove (-u)
-	$config["cron_cleanuptempdays"] = 7; // number of days to keep temporary files in the temp_filestore
 
-	// email templates section
-	$config['default_emailsubject'] = "{siteName}: {filename}";
-	$config['filedownloadedemailbody'] = '{CRLF}--simple_mime_boundary{CRLF}Content-type:text/plain; charset={charset}{CRLF}{CRLF}
-Dear Sir, Madam,
 
-The file below has been downloaded from {siteName} by {filefrom}.
+// --------------------------------------------------
+//              Transfer settings
+// --------------------------------------------------
 
-Filename: {fileoriginalname}
-Filesize: {filesize}
-Download link: {serverURL}?vid={filevoucheruid}
+$config['max_transfer_size'] = 2107374182400;
 
-The file is available until {fileexpirydate} after which it will be automatically deleted.
+$config['transfer_options'] = array(
 
-Best regards,
+		// Sender gets copies of all emails sent to everyone.  "spam me plenty" option.
+		'email_me_copies' => array(
+			'available' => true,
+			'advanced' => true,
+			'default' => false
+		),
 
-{siteName}{CRLF}{CRLF}--simple_mime_boundary{CRLF}Content-type:text/html; charset={charset}{CRLF}{CRLF}
-<HTML>
-<HEAD>
-<meta http-equiv="Content-Type" content="text/html;charset={charset}">
-</HEAD>
-<BODY>
-<P>Dear Sir, Madam,</P>
-<P>The file below has been downloaded from {siteName} by {filefrom}.</P>
-<TABLE WIDTH=100% BORDER=1 BORDERCOLOR="#000000" CELLPADDING=4 CELLSPACING=0>
-	<COL WIDTH=600>
-	<COL WIDTH=80>
-	<COL WIDTH=800>
-	<COL WIDTH=70>
-	<TR>
-		<TD WIDTH=600 BGCOLOR="#b3b3b3">
-			<P ALIGN=CENTER><B>Filename</B></P>
-		</TD>
-		<TD WIDTH=80 BGCOLOR="#b3b3b3">
-			<P ALIGN=CENTER><B>Filesize</B></P>
-		</TD>
-		<TD WIDTH=600 BGCOLOR="#b3b3b3">
-			<P ALIGN=CENTER><B>Download link</B></P>
-		</TD>
-		<TD WIDTH=70 BGCOLOR="#b3b3b3">
-			<P ALIGN=CENTER><B>Valid until</B></P>
-		</TD>
-	</TR>
-	<TR>
-		<TD WIDTH=600 BGCOLOR="#e6e6e6">
-			<P ALIGN=CENTER>{htmlfileoriginalname}</P>
-		</TD>
-		<TD WIDTH=80 BGCOLOR="#e6e6e6">
-			<P ALIGN=CENTER>{filesize}</P>
-		</TD>
-		<TD WIDTH=800 BGCOLOR="#e6e6e6">
-			<P ALIGN=CENTER><A HREF="{serverURL}?vid={filevoucheruid}">{serverURL}?vid={filevoucheruid}</A></P>
-		</TD>
-		<TD WIDTH=70 BGCOLOR="#e6e6e6">
-			<P ALIGN=CENTER>{fileexpirydate}</P>
-		</TD>
-	</TR>
-</TABLE>
-<P>Best regards,</P>
-<P>{siteName}</P>
-</BODY>
-</HTML>{CRLF}{CRLF}--simple_mime_boundary--';
-	$config['fileuploadedemailbody'] = '{CRLF}--simple_mime_boundary{CRLF}Content-type:text/plain; charset={charset}{CRLF}{CRLF}
-Dear Sir, Madam,
+		// Sender gets an email once an upload is complete.  Practical for long uploads
+		'email_upload_complete' => array(
+			'available' => true,
+			'advanced' => true,
+			'default' => true
+		),
 
-The file below has been uploaded to {siteName} by {filefrom} and you have been granted permission to download this file.
+		// By default send the Sender a daily overview of what happened to his/her transfers
+		// rather than sending individual emails for each event (download).
+		'email_daily_statistics' => array(
+			'available' => true,
+			'advanced' => false,
+			'default' => true
+		),
 
-Filename: {fileoriginalname}
-Filesize: {filesize}
-Download link: {serverURL}?vid={filevoucheruid}
+		// Sender gets an email when someone has downloaded (parts of) a transfer
+		'email_download_complete' => array(
+			'available' => true,
+			'advanced' => true,
+			'default' => false
+		),
+		
+		// Always send the sender an audit report when a transfer expires
+		// Because "default" is set to "true" and "available" to "false" the user can not untick this.
+		// If you want this to be a user choice, set 'available' to 'true'
+		//
+		// I made this choice because I want to be able to delete the audit logs pertaining to a transfer
+		// after a relatively short time.  So I want to be able to tell a user "here is your audit log, this
+		// shows who downloaded your files when.  I will now delete this information, if you wish to keep it
+		// then do not delete this email.
+		'email_report_on_closing' => array(
+			'available' => false,
+			'advanced' => false,
+			'default' => true
+		),
 
-The file is available until {fileexpirydate} after which it will be automatically deleted.
+		// Never allow a recipient to receive an email once their download is complete
+		'enable_recipient_email_download_complete' => array(
+			'available' => false,
+			'advanced' => false,
+			'default' => false
+		),
+		
+		// include the sender as a recipient
+		'add_me_to_recipients' => array(
+			'available' => true,
+			'advanced' => false,
+			'default' => true
+		),
 
-{filemessage_start}Personal message from {filefrom}: {filemessage}{filemessage_end}
+		// Allow a user to only upload a file and take care of download URL distribution him/herself.
+		'get_a_link' => array(
+			'available' => true,
+			'advanced' => false,
+			'default' => false
+		)
+);
 
-Best regards,
+// --------------------------------------------------
+//    TeraSender high speed upload module             
+// --------------------------------------------------
 
-{siteName}{CRLF}{CRLF}--simple_mime_boundary{CRLF}Content-type:text/html; charset={charset}{CRLF}{CRLF}
-<HTML>
-<HEAD>
-<meta http-equiv="Content-Type" content="text/html;charset={charset}">
-</HEAD>
-<BODY>
-<P>Dear Sir, Madam,</P>
-<P>The file below has been uploaded to {siteName} by {filefrom} and you have been granted permission to download this file.</P>
-<TABLE WIDTH=100% BORDER=1 BORDERCOLOR="#000000" CELLPADDING=4 CELLSPACING=0>
-	<COL WIDTH=600>
-	<COL WIDTH=80>
-	<COL WIDTH=800>
-	<COL WIDTH=70>
-	<TR>
-		<TD WIDTH=600 BGCOLOR="#b3b3b3">
-			<P ALIGN=CENTER><B>Filename</B></P>
-		</TD>
-		<TD WIDTH=80 BGCOLOR="#b3b3b3">
-			<P ALIGN=CENTER><B>Filesize</B></P>
-		</TD>
-		<TD WIDTH=600 BGCOLOR="#b3b3b3">
-			<P ALIGN=CENTER><B>Download link</B></P>
-		</TD>
-		<TD WIDTH=70 BGCOLOR="#b3b3b3">
-			<P ALIGN=CENTER><B>Valid until</B></P>
-		</TD>
-	</TR>
-	<TR>
-		<TD WIDTH=600 BGCOLOR="#e6e6e6">
-			<P ALIGN=CENTER>{htmlfileoriginalname}</P>
-		</TD>
-		<TD WIDTH=80 BGCOLOR="#e6e6e6">
-			<P ALIGN=CENTER>{filesize}</P>
-		</TD>
-		<TD WIDTH=800 BGCOLOR="#e6e6e6">
-			<P ALIGN=CENTER><A HREF="{serverURL}?vid={filevoucheruid}">{serverURL}?vid={filevoucheruid}</A></P>
-		</TD>
-		<TD WIDTH=70 BGCOLOR="#e6e6e6">
-			<P ALIGN=CENTER>{fileexpirydate}</P>
-		</TD>
-	</TR>
-</TABLE>
-<P></P>
-{filemessage_start}<TABLE WIDTH=100% BORDER=1 BORDERCOLOR="#000000" CELLPADDING=4 CELLSPACING=0>
-	<COL WIDTH=100%>
-	<TR>
-		<TD WIDTH=100% BGCOLOR="#b3b3b3">
-			<P ALIGN=CENTER><B>Personal message from {filefrom}:</B></P>
-		</TD>
-	</TR>
-	<TR>
-		<TD WIDTH=100% BGCOLOR="#e6e6e6">
-			<P><I>{htmlfilemessage}</I></P>
-		</TD>
-	</TR>
-</TABLE>{filemessage_end}
-<P>Best regards,</P>
-<P>{siteName}</P>
-</BODY>
-</HTML>{CRLF}{CRLF}--simple_mime_boundary--';
+$config['terasender_enabled'] = true;    	// 
+$config['terasender_advanced'] = true;    	// Make #webworkers configurable in UI.  Switched this on to make it easy 
+						// to determine optimal number for terasender_worker_count when going in production.  
+						// The useful number of maximum webworkers per browser changes nearly for each browser release.
+$config['terasender_worker_count'] = 10;   	// Number of web workers to launch simultaneously client-side when starting upload
+$config['terasender_start_mode'] = single;	// I think I prefer to show a nice serial predictable upload process
 
-	$config['voucherissuedemailsubject'] = 'Voucher';
-	$config['voucherissuedemailbody'] = '{CRLF}--simple_mime_boundary{CRLF}Content-type:text/plain; charset={charset}{CRLF}{CRLF}
-Dear Sir, Madam,
 
-Please, find below a voucher which grants access to {siteName}.
-With this voucher you can upload once one file and make it available for download to a group of people.
 
-Issuer: {filefrom}
-Voucher link: {serverURL}?vid={filevoucheruid}
+// --------------------------------------------------
+//              Authenticated user transfer settings
+// --------------------------------------------------
 
-The voucher is available until {fileexpirydate} after which it will be automatically deleted.
+// basic functionality tested.  Need to decide if "today" is part of the 10 days valid!
+// should do something to indicate at what time files will normally be deleted!
 
-{filemessage_start}Personal message from {filefrom}: {filemessage}{filemessage_end}
+$config['max_transfer_days_valid'] = 10;    				// what user sees in date picker for expiry date. If not set this defaults to 20.  
+$config['default_transfer_days_valid'] = 5;    				// Default expiry date as per date picker in upload UI.  Most users will not change this.  If not set, this defaults to 10.
 
-Best regards,
 
-{siteName}{CRLF}{CRLF}--simple_mime_boundary{CRLF}Content-type:text/html; charset={charset}{CRLF}{CRLF}
-<HTML>
-<HEAD>
-<meta http-equiv="Content-Type" content="text/html;charset={charset}">
-</HEAD>
-<BODY>
-<P>Dear Sir, Madam,</P>
-<P>Please, find below a voucher which grants access to {siteName}.</P>
-<P>With this voucher you can upload once one file and make it available for download to a group of people.</P>
-<TABLE WIDTH=100% BORDER=1 BORDERCOLOR="#000000" CELLPADDING=4 CELLSPACING=0>
-	<COL WIDTH=75>
-	<COL WIDTH=800>
-	<COL WIDTH=70>
-	<TR>
-		<TD WIDTH=75 BGCOLOR="#b3b3b3">
-			<P ALIGN=CENTER><B>Issuer</B></P>
-		</TD>
-		<TD WIDTH=800 BGCOLOR="#b3b3b3">
-			<P ALIGN=CENTER><B>Voucher link</B></P>
-		</TD>
-		<TD WIDTH=70 BGCOLOR="#b3b3b3">
-			<P ALIGN=CENTER><B>Valid until</B></P>
-		</TD>
-	</TR>
-	<TR>
-		<TD WIDTH=75 BGCOLOR="#e6e6e6">
-			<P ALIGN=CENTER>{filefrom}</P>
-		</TD>
-		<TD WIDTH=800 BGCOLOR="#e6e6e6">
-			<P ALIGN=CENTER><A HREF="{serverURL}?vid={filevoucheruid}">{serverURL}?vid={filevoucheruid}</A></P>
-		</TD>
-		<TD WIDTH=70 BGCOLOR="#e6e6e6">
-			<P ALIGN=CENTER>{fileexpirydate}</P>
-		</TD>
-	</TR>
-</TABLE>
-<P></P>
-{filemessage_start}<TABLE WIDTH=100% BORDER=1 BORDERCOLOR="#000000" CELLPADDING=4 CELLSPACING=0>
-	<COL WIDTH=100%>
-	<TR>
-		<TD WIDTH=100% BGCOLOR="#b3b3b3">
-			<P ALIGN=CENTER><B>Personal message from {filefrom}:</B></P>
-		</TD>
-	</TR>
-	<TR>
-		<TD WIDTH=100% BGCOLOR="#e6e6e6">
-			<P><I>{htmlfilemessage}</I></P>
-		</TD>
-	</TR>
-</TABLE>{filemessage_end}
-<p></p>
-<P>Best regards,</P>
-<P>{siteName}</P>
-</BODY>
-</HTML>{CRLF}{CRLF}--simple_mime_boundary--';
+// ---------------------------------------------
+//              Guest transfer settings
+// ---------------------------------------------
 
-	$config['defaultvouchercancelled'] = "{CRLF}--simple_mime_boundary{CRLF}Content-type:text/plain; charset={charset}{CRLF}{CRLF}
-Dear Sir, Madam,
+//$config['default_guest_days_valid'] = ;    				// if not set, this defaults default_transfer_days_valid
+//$config['max_guest_days_valid'] = ;    				// if not set, this defaults to max_days_valid
+//$config['guest_options'] = '';    				// set of options available for guest users
+//$config['max_guest_recipients'] = 50;    				// max no. of recipients a transfer can have.  Defaults to 50.
 
-A voucher from {filefrom} has been cancelled.
+$config['guest_options'] = array(
 
-Best regards,
+                // Guest invitation creator gets an email when guest starts upload.
+                'email_upload_started' => array(
+                        'available' => true,
+                        'advanced' => true,
+                        'default' => false
+                ),
 
-{siteName}{CRLF}{CRLF}--simple_mime_boundary{CRLF}Content-type:text/html; charset={charset}{CRLF}{CRLF}
-<HTML>
-<HEAD>
-<meta http-equiv=\"Content-Type\" content=\"text/html;charset={charset}\">
-</HEAD>
-<BODY>
-Dear Sir, Madam,<BR><BR>A voucher from {filefrom} has been cancelled.<BR><BR>
-	<P>Best regards,</P>
-<P>{siteName}</P>
-</BODY>
-</HTML>{CRLF}{CRLF}--simple_mime_boundary--";
+                // Guest invitation creator gets an email when guest accesses upload page.
+                'email_upload_page_access' => array(
+                        'available' => true,
+                        'advanced' => true,
+                        'default' => false
+                ),
 
-	$config['defaultfilecancelled'] = "{CRLF}--simple_mime_boundary{CRLF}Content-type:text/plain; charset={charset}{CRLF}{CRLF}
-Dear Sir, Madam,
+		// A guest invitation can only be used for one transfer
+                'valid_only_one_time' => array(
+                        'available' => true,
+                        'advanced' => false,
+                        'default' => true
+		),
 
-The file '{fileoriginalname}' from {filefrom} has been deleted and is no longer available to download.
+		// This guest invitation will not expire and can be used for unlimited transfers.
+		// Combine with "can_only_send_to_me" to create a permanent upload link users can 
+		// include in email signatures
+                'does_not_expire' => array(
+                        'available' => true,
+                        'advanced' => true,
+                        'default' => false
+		),
 
-Best regards,
+		// Guests can only use their access to send transfers to the creator of the guest invitation
+                'can_only_send_to_me' => array(
+                        'available' => true,
+                        'advanced' => false,
+                        'default' => true
+		),
+);
 
-{siteName}{CRLF}{CRLF}--simple_mime_boundary{CRLF}Content-type:text/html; charset={charset}{CRLF}{CRLF}
-<HTML>
-<BODY>
-Dear Sir, Madam,<BR><BR>The file '{htmlfileoriginalname}' from {filefrom} has been deleted and is no longer available to download.<BR><BR>
-	<P>Best regards,</P>
-<P>{siteName}</P>
-</BODY>
-</HTML>{CRLF}{CRLF}--simple_mime_boundary--";
-	// End of email templates section
 
-	// End of configurable settings
 
-	return $config;
-	}
-}
+// ---------------------------------------------
+//              DB configuration
+// ---------------------------------------------
+$config["db_type"] ='mysql';       // String, pgsql or mysql
+$config['db_host'] ='{DB_HOST}';       // String, database host 
+$config['db_database'] ='{DB_NAME}';   // String, database name
+$config['db_username'] ='{DB_USER}';   // String, database username
+$config['db_password'] ='{DB_PASSWORD}';   // String, database password
 
-// Helper function used when calculating maximum upload size from the various maxsize configuration items
-function let_to_num($v){ //This function transforms the php.ini notation for numbers (like '2M') to an integer (2*1024*1024 in this case)
-    $ret = trim($v);
-    $last = strtoupper($ret[strlen($ret)-1]);
-    switch($last) {
-    case 'P':
-        $ret *= 1024;
-    case 'T':
-        $ret *= 1024;
-    case 'G':
-        $ret *= 1024;
-    case 'M':
-        $ret *= 1024;
-    case 'K':
-        $ret *= 1024;
-        break;
-    }
-      return $ret;
-}
+// ---------------------------------------------
+//              SAML configuration
+// ---------------------------------------------
+
+$config['auth_sp_saml_simplesamlphp_url'] ='/simplesaml/';        // Url of simplesamlphp
+//$config['auth_sp_saml_simplesamlphp_location'] ='/usr/local/filesender/fs20-simplesaml/';   // Location of simplesamlphp libraries
+$config['auth_sp_saml_simplesamlphp_location'] ='/opt/simplesamlphp/';   // Location of simplesamlphp libraries
+
+
+// ---------------------------------------------
+//              File locations (or storage?)
+// ---------------------------------------------
+
+$config['storage_type'] = 'filesystem';
+$config['storage_filesystem_path'] = '/data/';
+
+    //'storage_filesystem_df_command' => 'df {path}',
+
+// ---------------------------------------------
+//              Multi-site configs
+// ---------------------------------------------
+
+//
+// Can't write to datbase?  Functionality still exists?
+//$config['config_overrides'] = array( 'site_name_in_header' => 'bool', 'site_name' => array('type' => 'string', 'validator' => 'is_string'));
+
+
+//      ----------------------------
+//      -------- [optional] --------
+//      ----------------------------
+//
+// If you want to overide the SAML simplephp configuration defaults parameter,
+// uncoment and edit the following lines
+// 
+// // Authentification type ('saml' or 'shibboleth')
+$config['auth_sp_type'] = 'saml';
+$config['auth_sp_saml_authentication_source'] = 'default-sp';
+//$config['auth_sp_shibboleth_email_attribute'] = 'mail';
+//$config['auth_sp_shibboleth_uid_attribute'] = 'eduPersonPrincipalName';
+//$config['auth_sp_shibboleth_name_attribute'] = 'cn';
+$config['auth_sp_saml_email_attribute'] = 'mail';
+$config['auth_sp_saml_uid_attribute'] = 'eduPersonPrincipalName';
+$config['auth_sp_saml_name_attribute'] = 'cn';
+// 
+// // Get email attribute from authentication service
+// $config['auth_sp_saml_email_attribute'] = 'mail';
+// 
+// // Get name attribute from authentication service
+// $config['auth_sp_saml_name_attribute'] = 'cn';
+// 
+// // Get uid attribute from authentication service.  Usually eduPersonTargetedId or eduPersonPrincipalName
+// 
+// // Get path  attribute from authentication service

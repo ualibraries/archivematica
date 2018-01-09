@@ -10,4 +10,4 @@ COPY supervisor/shibboleth.conf /etc/supervisor/conf.d/
 
 COPY docker-entrypoint.sh /
 
-ENTRYPOINT ["/docker-entrypoint.sh"]
+ENTRYPOINT ["/usr/bin/supervisord", "--nodaemon"]
