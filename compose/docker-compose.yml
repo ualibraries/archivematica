@@ -25,6 +25,7 @@ services:
       - filesender:/opt/filesender
       - simplesaml:/opt/simplesamlphp
       - shibboleth:/run/shibboleth
+      - /etc/shibboleth:/etc/shibboleth
       - /etc/apache2/ssl.crt:/etc/ssl/nginx
       - ./saml/config.php:/opt/conf.d/simplesamlphp_config.php
       - ./saml/authsources.php:/opt/conf.d/simplesamlphp_authsources.php
@@ -36,9 +37,10 @@ services:
     links:
       - db-host
     environment:
-      - SMTP_SERVER=smtp.test
-      - FILESENDER_DOMAIN=localhost
+      - SMTP_SERVER=smtpgate.mail.arizona.edu
+      - FILESENDER_DOMAIN=repository-stg.library.arizona.edu
     volumes:
+      - /etc/shibboleth:/etc/shibboleth
       - filesender:/opt/filesender
       - simplesaml:/opt/simplesamlphp
 
