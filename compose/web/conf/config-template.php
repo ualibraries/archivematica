@@ -285,7 +285,9 @@ $config['storage_filesystem_path'] = '/data/';
 // 
 // // Authentification type ('saml' or 'shibboleth')
 $config['auth_sp_type'] = 'saml';
-$config['auth_sp_saml_authentication_source'] = 'default-sp';
+//$config['auth_sp_saml_authentication_source'] = 'example-cas';
+$config['auth_sp_saml_authentication_source'] = 'static-user';
+//$config['auth_sp_saml_authentication_source'] = 'default-sp';
 //$config['auth_sp_shibboleth_email_attribute'] = 'mail';
 //$config['auth_sp_shibboleth_uid_attribute'] = 'eduPersonPrincipalName';
 //$config['auth_sp_shibboleth_name_attribute'] = 'cn';

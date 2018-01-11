@@ -5,6 +5,7 @@ set -x
 CONF_DIR="/opt/conf.d"
 FILESENDER_DIR="/opt/filesender"
 SIMPLESAML_DIR="/opt/simplesamlphp"
+SIMPLESAML_MODULES="cas exampleauth"
 NGINX_SSL_DIR="/etc/ssl/nginx"
 NGINX_CONF="${CONF_DIR}/nginx.conf"
 NGINX_SSL_CONF="${CONF_DIR}/nginx-ssl.conf"
@@ -47,6 +48,12 @@ if [ -d ${CONF_DIR}/saml/cert ]; then
    echo "Copying certificates to SimpleSAMLphp cert dir..."
    cp ${CONF_DIR}/saml/cert ${SIMPLESAML_DIR} -r
 fi
+
+for MODULE in $SIMPLESAML_MODULES; do
+   if [ -d ${SIMPLESAML_DIR}/modules/$MODULE ]; then
+      touch ${SIMPLESAML_DIR}/modules/$MODULE/enable
+   fi
+done         
 
 # filesender setup:
 

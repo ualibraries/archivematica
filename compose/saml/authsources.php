@@ -10,6 +10,25 @@ $config = array(
         'core:AdminPassword',
     ),
 
+'example-cas' => array(
+    'cas:CAS',
+    'cas' => array(
+        'login' => 'https://webauth.arizona.edu/webauth/login',
+        'validate' => null,
+        'logout' => null,
+    ),
+    'ldap' => array(
+        'servers' => 'ldaps://ldap.arizona.edu:636/',
+        'enable_tls' => true,
+        'searchbase' => 'ou=people,dc=org,dc=com',
+        'searchattributes' => 'uid',
+        'attributes' => array('uid','cn'),
+        'priv_user_dn' => 'cn=simplesamlphp,ou=applications,dc=org,dc=com',
+        'priv_user_pw' => 'password',
+
+    ),
+),
+
 
     // An authentication source which can authenticate against both SAML 2.0
     // and Shibboleth 1.3 IdPs.
@@ -79,14 +98,14 @@ $config = array(
     ),
     */
 
-    /*
-    'example-static' => array(
+    'static-user' => array(
         'exampleauth:Static',
         'uid' => array('testuser'),
+        'eduPersonPrincipalName' => array('testuser'),
+        'mail' => array('glbrimhall@email.arizona.edu'),
         'eduPersonAffiliation' => array('member', 'employee'),
         'cn' => array('Test User'),
     ),
-    */
 
     /*
     'example-userpass' => array(

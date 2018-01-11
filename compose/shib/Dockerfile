@@ -8,6 +8,4 @@ RUN DEBIAN_FRONTEND=noninteractive && apt-get install -y supervisor
 
 COPY supervisor/shibboleth.conf /etc/supervisor/conf.d/
 
-COPY docker-entrypoint.sh /
-
 ENTRYPOINT ["/usr/bin/supervisord", "--nodaemon"]

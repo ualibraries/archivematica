@@ -99,7 +99,7 @@ $config = array(
      * A possible way to generate a random salt is by running the following command from a unix shell:
      * tr -c -d '0123456789abcdefghijklmnopqrstuvwxyz' </dev/urandom | dd bs=32 count=1 2>/dev/null;echo
      */
-    'secretsalt' => 'v4snl7qy7ogknkfq2s3ul7ul8ztd72vy',
+    'secretsalt' => 'nr12p2m4i76jr8qn5po6d757zk52muyq',
 
     /*
      * This password must be kept secret, and modified from the default value 123.
@@ -414,7 +414,7 @@ $config = array(
      * one of the functionalities below, but in some cases you could run multiple functionalities.
      * In example when you are setting up a federation bridge.
      */
-    'enable.saml20-idp' => false,
+    'enable.saml20-idp' => true,
     'enable.shib13-idp' => false,
     'enable.adfs-idp' => false,
     'enable.wsfed-sp' => false,

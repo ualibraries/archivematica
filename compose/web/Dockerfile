@@ -31,7 +31,8 @@ WORKDIR /
 RUN \
 groupadd _shibd --gid 799 && \
 useradd _shibd --uid 799 --gid 799 \
---home /var/log/shibboleth --shell /bin/false
+--home /var/log/shibboleth --shell /bin/false && \
+adduser nginx _shibd
 
 # Enable directory colors:
 RUN \
