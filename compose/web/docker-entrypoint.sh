@@ -7,8 +7,8 @@ FILESENDER_DIR="/opt/filesender"
 SIMPLESAML_DIR="/opt/simplesamlphp"
 SIMPLESAML_MODULES="cas exampleauth"
 NGINX_SSL_DIR="/etc/ssl/nginx"
-NGINX_CONF="${CONF_DIR}/nginx.conf"
-NGINX_SSL_CONF="${CONF_DIR}/nginx-ssl.conf"
+NGINX_CONF="${CONF_DIR}/port80.conf"
+NGINX_SSL_CONF="${CONF_DIR}/port443.conf"
 NGINX_CONF_DIR="/etc/nginx/conf.d"
 
 DB_HOST=${DB_HOST:-localhost}
@@ -63,6 +63,10 @@ if [ -d ${FILESENDER_DIR}-${FILESENDER_V} ]; then
     rm -r ${FILESENDER_DIR}-${FILESENDER_V}
 fi
 
+if [ -f ${CONF_DIR}/login.php ]; then
+    cp ${CONF_DIR}/login.php ${FILESENDER_DIR}/www/login.php
+fi
+
 if [ -f ${CONF_DIR}/config.php ]; then
     cp ${CONF_DIR}/config.php ${FILESENDER_DIR}/config/config.php
 else 
@@ -74,6 +78,7 @@ else
 	-e "s/{DB_USER}/${DB_USER}/g" \
 	-e "s/{DB_PASSWORD}/${DB_PASSWORD}/g" \
 	-e "s/{ADMIN_USERS}/${ADMIN_USERS:-admin}/g" \
+	-e "s/{ADMIN_EMAIL}/${ADMIN_EMAIL:-admin@abcde.edu}/g" \
 	-e "s/{SAML_MAIL_ATTR}/${SAML_MAIL_ATTR:-mail}/g" \
 	-e "s/{SAML_NAME_ATTR}/${SAML_NAME_ATTR:-displayName}/g" \
 	-e "s/{SAML_UID_ATTR}/${SAML_UID_ATTR:-uid}/g" \
@@ -107,26 +112,27 @@ if [ -e /usr/bin/mysql ]; then
 fi
 
 if [ -d $NGINX_SSL_DIR ]; then
-   if [ ! -f "$NGINX_CONF_DIR/nginx-ssl.conf" ]; then
+   if [ ! -f "$NGINX_CONF_DIR/port443.conf" ]; then
        echo " **** Configuring Nginx to use HTTPS **** "
 
-       cp $NGINX_SSL_CONF "$NGINX_CONF_DIR/nginx-ssl.conf"
+       rm "$NGINX_CONF_DIR/ssl.conf"
+       cp $NGINX_SSL_CONF "$NGINX_CONF_DIR/port443.conf"
 
        sed -i \
            -e "s/{FILESENDER_DOMAIN}/${FILESENDER_DOMAIN:-localhost}/g" \
-       "$NGINX_CONF_DIR/nginx-ssl.conf"
+       "$NGINX_CONF_DIR/port443.conf"
  
    fi
 else
-    if [ ! -f "$NGINX_CONF_DIR/nginx.conf" ]; then
+    if [ ! -f "$NGINX_CONF_DIR/port80.conf" ]; then
         echo " **** Cert dir '$NGINX_SSL_DIR' does not exist **** "
         echo " **** Configuring Nginx for HTTP only **** "
 
-        cp $NGINX_CONF "$NGINX_CONF_DIR/nginx.conf"
+        cp $NGINX_CONF "$NGINX_CONF_DIR/port80.conf"
 
 	sed -i \
             -e "s/{FILESENDER_DOMAIN}/${FILESENDER_DOMAIN:-localhost}/g" \
-	"$NGINX_CONF_DIR/nginx.conf"
+	"$NGINX_CONF_DIR/port80.conf"
     fi
 fi
 

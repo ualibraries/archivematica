@@ -38,6 +38,7 @@ services:
     volumes:
       - filesender:/opt/filesender
       - simplesaml:/opt/simplesamlphp
+      - ./data:/data
 
   shib:
     build: ./shib

@@ -47,10 +47,10 @@
 // ---------------------------------------------
 // 
 $config['site_url'] = 'https://{FILESENDER_DOMAIN}/';                // String, URL of the application
-// 
-$config['admin'] = 'admin';            // String, UID's (from  $config['saml_uid_attribute']) 
+$config['site_logouturl'] = 'https://{FILESENDER_DOMAIN}/login.php';
+$config['admin'] = '{ADMIN_USERS}';            // String, UID's (from  $config['saml_uid_attribute']) 
                                     // that have Administrator permissions
-$config['admin_email'] ='glbrimhall@email.arizona.edu';       // String, email  address(es, separated by ,) 
+$config['admin_email'] ='{ADMIN_EMAIL}';       // String, email  address(es, separated by ,) 
                                     			// to receive administrative messages (low disk  space warning)
 
 $config['session_cookie_path'] = '/';
@@ -71,10 +71,10 @@ $config['lang_url_enabled'] = true;    				// default is false.  Needed to make 
 
 $config['email_use_html'] = true;    				// true or false
 $config['email_from'] = 'no-reply@uninett.no';    		// either 'sender' or an email address
-$config['email_from_name'] = '{EMAIL_FROM}';	// pretty name with the From: address
+$config['email_from_name'] = '';	// pretty name with the From: address
 $config['email_reply_to'] ='sender';    			// either 'sender' or an email address
 // $config['email_reply_to_name'] = 'pretty name';    		// pretty name in case email_reply_to is a configured email address
-$config['email_return_path'] = '{EMAIL_REPLY}';				// either 'sender' or an email address
+$config['email_return_path'] = 'sender';				// either 'sender' or an email address
 $config['email_newline'] = "\r\n";				// if emails are mangled replace this with \n.  Make sure to put it in double quotes!!
 
 
@@ -164,6 +164,18 @@ $config['transfer_options'] = array(
 			'default' => false
 		)
 );
+
+$config['log_facilities'] = array(
+
+                // Guest invitation creator gets an email when guest starts upl$
+                'file-output' => array( 
+                 'type' => 'file',
+                 'path' => FILESENDER_BASE.'/log/',
+                 'rotate' => 'daily',
+                 'level' => 'debug'
+                 )
+);
+
 
 // --------------------------------------------------
 //    TeraSender high speed upload module             
@@ -284,23 +296,17 @@ $config['storage_filesystem_path'] = '/data/';
 // uncoment and edit the following lines
 // 
 // // Authentification type ('saml' or 'shibboleth')
-$config['auth_sp_type'] = 'saml';
+//$config['auth_sp_type'] = 'saml';
 //$config['auth_sp_saml_authentication_source'] = 'example-cas';
-$config['auth_sp_saml_authentication_source'] = 'static-user';
-//$config['auth_sp_saml_authentication_source'] = 'default-sp';
-//$config['auth_sp_shibboleth_email_attribute'] = 'mail';
-//$config['auth_sp_shibboleth_uid_attribute'] = 'eduPersonPrincipalName';
-//$config['auth_sp_shibboleth_name_attribute'] = 'cn';
-$config['auth_sp_saml_email_attribute'] = 'mail';
-$config['auth_sp_saml_uid_attribute'] = 'eduPersonPrincipalName';
-$config['auth_sp_saml_name_attribute'] = 'cn';
-// 
-// // Get email attribute from authentication service
-// $config['auth_sp_saml_email_attribute'] = 'mail';
-// 
-// // Get name attribute from authentication service
-// $config['auth_sp_saml_name_attribute'] = 'cn';
-// 
-// // Get uid attribute from authentication service.  Usually eduPersonTargetedId or eduPersonPrincipalName
-// 
-// // Get path  attribute from authentication service
+//$config['auth_sp_saml_authentication_source'] = 'static-user';
+//$config['auth_sp_saml_email_attribute'] = '{SAML_MAIL_ATTR}';
+//$config['auth_sp_saml_uid_attribute'] = '{SAML_UID_ATTR}';
+//$config['auth_sp_saml_name_attribute'] = '{SAML_NAME_ATTR}';
+
+$config['auth_sp_type'] = 'shibboleth';
+$config['auth_sp_shibboleth_login_url'] = '/Shibboleth.sso/Login?target={target}';
+$config['auth_sp_shibboleth_logout_url'] = '/Shibboleth.sso/Logout?return={target}';
+$config['auth_sp_shibboleth_email_attribute'] = 'HTTP_SHIB_MAIL';
+$config['auth_sp_shibboleth_uid_attribute'] = 'HTTP_SHIB_UID';
+$config['auth_sp_shibboleth_name_attribute'] = 'HTTP_SHIB_CN';
+
