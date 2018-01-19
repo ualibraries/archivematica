@@ -1,0 +1,65 @@
+version: '2'
+services:
+  web:
+    build: ./web
+    restart: always
+    tty: true
+    links:
+      - fpm
+      - db-host
+      - shib
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      - DB_HOST=db-host
+      - DB_NAME=filesender
+      - DB_USER=filesender
+      - DB_PASSWORD=filesender
+      - FILESENDER_DOMAIN=repository-stg.library.arizona.edu
+      - SAML_MAIL_ATTR=urn:oid:0.9.2342.19200300.100.1.3
+      - SAML_NAME_ATTR=urn:oid:2.16.840.1.113730.3.1.241
+      - SAML_UID_ATTR=urn:oid:0.9.2342.19200300.100.1.1
+
+    volumes:
+      - filesender:/opt/filesender
+      - simplesaml:/opt/simplesamlphp
+      - shibboleth:/run/shibboleth
+      - /etc/apache2/ssl.crt:/etc/ssl/nginx
+
+  fpm:
+    build: ./fpm
+    restart: always
+    links:
+      - db-host
+    environment:
+      - SMTP_SERVER=smtpgate.mail.arizona.edu
+      - FILESENDER_DOMAIN=repository-stg.library.arizona.edu
+    volumes:
+      - filesender:/opt/filesender
+      - simplesaml:/opt/simplesamlphp
+      - ./data:/data
+
+  shib:
+    build: ./shib
+    restart: always
+    volumes:
+      - /etc/shibboleth:/etc/shibboleth
+      - shibboleth:/run/shibboleth
+
+  db-host:
+    image: 'mysql'
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=insecure
+      - MYSQL_DATABASE=filesender
+      - MYSQL_USER=filesender
+      - MYSQL_PASSWORD=filesender
+      - MYSQL_ALLOW_EMPTY_PASSWORD='false'
+    volumes:
+      - ./mysql_data:/var/lib/mysql
+
+volumes:
+  shibboleth:
+  filesender:
+  simplesaml:
