@@ -41,11 +41,11 @@ nginx/   - web
 
 This release is still considered beta because only the following deployment use cases have been tested:
 
-1. [Throw-away self-contained test instance](#throw_away_test).
-2. [Self-contained instance, good across upgrades](#self_contained_upgrades)
+1. [Throw-away self-contained test instance](#throw-away-test).
+2. [Self-contained instance, good across upgrades](#self-contained-upgradeable)
 
 
-## <a name="throw_away_test"></a>Throw-away self-contained test instance
+## Throw away test
 
 This example quickly creates an archivematica instance to test with. Any processed content/logs/state will get erased if the docker container is recreated.
 
@@ -80,7 +80,7 @@ docker run -d \
 
 ```
 
-## <a name="self_contained_upgrades"></a>Self-contained instance, good across upgrades
+## Self contained upgradeable
 
 Archivematica is a complex piece of software, and to create a container that will keep state across upgrades, the following docker container creation command is recommended:
 
