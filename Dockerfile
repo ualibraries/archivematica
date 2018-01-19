@@ -123,12 +123,7 @@ useradd mysql --uid 332 --gid 332 --create-home --home /var/lib/mysql --shell /b
 groupadd archivematica --gid 333 && \
 useradd archivematica --uid 333 --gid 333 --create-home --home /var/archivematica --shell /bin/false
 
-VOLUME [ "/var/lib/elasticsearch",
-         "/var/lib/gearman",
-         "/var/lib/clamav",
-         "/var/lib/mysql",
-         "/var/archivematica",
-         "/var/log" ]
+VOLUME [ "/var/lib/elasticsearch", "/var/lib/gearman", "/var/lib/clamav", "/var/lib/mysql", "/var/archivematica", "/var/log" ]
 
 # Auto-start
 CMD /service-archivematica.sh start FOREGROUND
