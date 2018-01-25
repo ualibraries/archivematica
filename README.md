@@ -41,11 +41,11 @@ nginx/   - web
 
 This release is still considered beta because only the following deployment use cases have been tested:
 
-1. [Throw-away self-contained test instance](#throw-away-test).
-2. [Self-contained instance, good across upgrades](#self-contained-upgradeable)
+1. [Throw-away self-contained test instance](#test-instance).
+2. [Self-contained instance, good across upgrades](#upgradeable)
 
 
-## Throw away test
+## Test Instance
 
 This example quickly creates an archivematica instance to test with. Any processed content/logs/state will get erased if the docker container is recreated.
 
@@ -63,7 +63,7 @@ SMTP_ADMIN=admin@abcd.edu
 AMATICA_INCOMING_DIR=/home
 
 ```
-#!/bin/sh
+`#!/bin/sh
 
 AMATICA_INCOMING_DIR=/mnt/archivematica-dev-home
 
@@ -80,12 +80,12 @@ docker run -d \
 
 ```
 
-## Self contained upgradeable
+## Upgradeable
 
-Archivematica is a complex piece of software, and to create a container that will keep state across upgrades, the following docker container creation command is recommended:
+This creates an archivematica instance that will keep state across upgrades. In order to accomplish this many service directories are externalized to the host system ( or could be put into a docker volume ). To ensure uid:gid services match across the host and docker image, a number of users need to be created on the host system.
 
 ```
-#!/bin/sh
+`#!/bin/sh
 AMATICA_INCOMING_DIR=/mnt/archivematica-dev-home
 AMATICA_ELASTIC_DIR=/var/lib/elasticsearch
 AMATICA_PROCESS_DIR=/var/archivematica
@@ -123,6 +123,3 @@ docker run -d \
        uazlibraries/archivematica:1.6.1-beta1
 
 ```
-
-
-

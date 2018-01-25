@@ -19,7 +19,8 @@ FROM ubuntu:14.04
 # Logging for clamav: /var/log/clamav
 # Logging for mysql: /var/log/mysql
 # Logging for archivematica: /var/log/archivematica, /var/log/fits-ngserver
-RUN groupadd elasticsearch --gid 328 && \
+RUN \
+groupadd elasticsearch --gid 328 && \
 useradd elasticsearch --uid 328 --gid 328 --create-home --home /var/lib/elasticsearch --shell /bin/false && \
 groupadd gearman --gid 329 && \
 useradd gearman --uid 329 --gid 329 --create-home --home /var/lib/gearman --shell /bin/false && \
@@ -111,17 +112,6 @@ chown -vR clamav.clamav     /var/lib/clamav && \
 rm -vfr /usr/share/archivematica/docker/var.lib.clamav && \
 mkdir /var/log/archivematica && \
 chown -vR archivematica.archivematica /var/log/archivematica
-
-RUN groupadd elasticsearch --gid 328 && \
-useradd elasticsearch --uid 328 --gid 328 --create-home --home /var/lib/elasticsearch --shell /bin/false && \
-groupadd gearman --gid 329 && \
-useradd gearman --uid 329 --gid 329 --create-home --home /var/lib/gearman --shell /bin/false && \
-groupadd clamav --gid 331 && \
-useradd clamav --uid 331 --gid 331 --create-home --home /var/lib/clamav --shell /bin/false && \
-groupadd mysql --gid 332 && \
-useradd mysql --uid 332 --gid 332 --create-home --home /var/lib/mysql --shell /bin/false && \
-groupadd archivematica --gid 333 && \
-useradd archivematica --uid 333 --gid 333 --create-home --home /var/archivematica --shell /bin/false
 
 VOLUME [ "/var/lib/elasticsearch", "/var/lib/gearman", "/var/lib/clamav", "/var/lib/mysql", "/var/archivematica", "/var/log" ]
 
