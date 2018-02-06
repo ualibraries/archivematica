@@ -69,7 +69,8 @@ AMATICA_INCOMING_DIR=/mnt/archivematica-dev-home
 
 docker run -d \
        --restart=unless-stopped \
-       --net=host \
+       -p 80:80 \
+       -p 8000:8000 \
        -e SMTP_DOMAIN=abcd.edu \
        -e SMTP_HOST=smtp.abcd.edu \
        -e SMTP_FROM=archivematica-admin@abcd.edu \
@@ -109,7 +110,8 @@ fi
 
 docker run -d \
        --restart=unless-stopped \
-       --net=host \
+       -p 80:80 \
+       -p 8000:8000 \
        -e SMTP_DOMAIN=abcd.edu \
        -e SMTP_HOST=smtp.abcd.edu \
        -e SMTP_FROM=archivematica-admin@abcd.edu \
