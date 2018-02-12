@@ -2,9 +2,9 @@
 
 set -e
 
-USER='nginx'
-USER_ID='101'
-GROUP_ID='101'
+USER='archivematica'
+USER_ID='333'
+GROUP_ID='333'
 
 FILESENDER_DOMAIN=${FILESENDER_DOMAIN:-localhost}
 SMTP_SERVER=${SMTP_SERVER:-localhost}
