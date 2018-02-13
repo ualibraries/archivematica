@@ -27,14 +27,15 @@ if [ "`echo $AMATICA_NOSERVICE | grep -i mysql`" = "" ]; then
   service mysql start
 else
   service mysql stop
-  WAIT_DB=20
-  echo -n "* Waiting $WAIT_DB seconds for external mysql to come online ..."
-  sleep $WAIT_DB
-  while [ $RC != "0" ]; do
-    nc -w 5 -z $DB_HOST ${DB_PORT:-3306}
-    RC=$?  
+
+  echo "* Waiting for external database to come online ..."
+
+  RESULT=`echo 0`
+  while [ $RESULT -ne 1 ]; do
+    echo " **** Database is not responding, waiting ... **** "
+    sleep 5
+    RESULT=`nc -z -w1 ${DB_HOST} ${DB_PORT:-3306} && echo 1 || echo 0`
   done
-  echo "Done."
 fi
 
 apt-get install -y elasticsearch

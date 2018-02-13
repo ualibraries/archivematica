@@ -2,7 +2,7 @@ version: '2'
 services:
 
   archivematica:
-    image: 'archivematica:1.6.1-beta2'
+    image: 'uazlibraries/archivematica:1.6.1-beta2'
     restart: always
     links:
       - db-host
