@@ -1,0 +1,31 @@
+version: '2'
+services:
+
+  archivematica:
+    image: 'uazlibraries/archivematica:1.6.1-beta2'
+    restart: always
+    links:
+      - db-host
+    ports:
+      - "80:80"
+      - "8000:8000"
+    environment:
+      - SMTP_DOMAIN=email.arizona.edu
+      - SMTP_HOST=smtpgate.mail.arizona.edu
+      - SMTP_FROM=admin@email.arizona.edu
+      - SMTP_ADMIN=glbrimhall@email.arizona.edu
+      - AMATICA_NOSERVICE=mysql,logfile
+      - DB_HOST=db-host
+      - DB_USER=filesender
+      - DB_PASSWORD=filesender
+      - DB_DATABASE=MCP
+
+  db-host:
+    image: 'mysql'
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=insecure
+      - MYSQL_DATABASE=MCP
+      - MYSQL_USER=filesender
+      - MYSQL_PASSWORD=filesender
+      - MYSQL_ALLOW_EMPTY_PASSWORD='false'

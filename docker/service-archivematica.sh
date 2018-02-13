@@ -14,20 +14,21 @@ service_check () {
   fi
 }
 
+#Check to see if this is the first time the container is ran
+export SETUP_DIR="/usr/share/archivematica/docker"
+export SETUP_LOG="/var/log/archivematica/setup-archivematica.log"
+
+if [ ! -f "$SETUP_DIR/setup-launched" ]; then
+  touch "$SETUP_DIR/setup-launched"
+  cd $SETUP_DIR && ./setup-log-archivematica.sh
+fi
+
 service_check postfix
 
 # mysql requires docker aufs instead of the now default overlay2 which does
 # not provide provide all necessary mysql IO features, see 
 # https://github.com/docker/for-linux/issues/72
 service_check mysql
-
-#Check to see if this is the first time the container is ran
-export SETUP_DIR="/usr/share/archivematica/docker"
-export SETUP_LOG="/var/log/archivematica/setup-archivematica.log"
-
-if [ ! -f "$SETUP_LOG" ]; then
-  cd $SETUP_DIR && ./setup-log-archivematica.sh
-fi
 
 service_check elasticsearch
 

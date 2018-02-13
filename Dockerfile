@@ -91,22 +91,19 @@ archivematica-mcp-client
 # Create directory to add docker installation scripts
 RUN echo 'debconf debconf/frontend select Teletype' | \
 debconf-set-selections && \
-mkdir -p /usr/share/archivematica/
+mkdir -p /usr/share/archivematica/ && \
+mkdir -p /etc/archivematica/archivematicaCommon
 
 # Add docker installation scripts
 ADD docker/ /usr/share/archivematica/docker/
 
 # Move docker installation files to runtime locations
-RUN \
-mv /usr/share/archivematica/docker/init.d/archivematica-* /etc/init.d/ && \
-mv /usr/share/archivematica/docker/dbconfig-common/* /etc/dbconfig-common/ && \
-mv /usr/share/archivematica/docker/service-archivematica.sh /service-archivematica.sh && \
-rm -vfr /usr/share/archivematica/docker/dbconfig-common && \
-rm -vfr /usr/share/archivematica/docker/init.d/
-
 # Install pre-downloaded clamav virus database.
 # Setup archivematica log directory
 RUN \
+mv /usr/share/archivematica/docker/init.d/archivematica-* /etc/init.d/ && \
+mv /usr/share/archivematica/docker/dbconfig-common/* /etc/dbconfig-common/ && \
+mv /usr/share/archivematica/docker/service-archivematica.sh /entrypoint-archivematica.sh && \
 mv -v   /usr/share/archivematica/docker/var.lib.clamav/* /var/lib/clamav && \
 chown -vR clamav.clamav     /var/lib/clamav && \
 rm -vfr /usr/share/archivematica/docker/var.lib.clamav && \
@@ -118,4 +115,4 @@ VOLUME [ "/var/lib/elasticsearch", "/var/lib/gearman", "/var/lib/clamav", "/var/
 EXPOSE 80 443 8000
 
 # Auto-start
-CMD /service-archivematica.sh start FOREGROUND
+CMD /entrypoint-archivematica.sh start FOREGROUND

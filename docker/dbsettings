@@ -1,0 +1,6 @@
+[client]
+user=__DB_USER__
+password=__DB_PASSWORD__
+host=__DB_HOST__
+database=__DB_DATABASE__
+max_overflow=40

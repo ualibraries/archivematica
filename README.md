@@ -95,17 +95,17 @@ AMATICA_LOG_DIR=/var/log/archivematica
 
 if [ "`id archivematica 2>/dev/null`" = "" ]; then
   sudo groupadd archivematica --gid 333
-  sudo useradd archivematica --uid 333 --gid 333 --create-home --home /var/archivematica --shell /bin/false
+  sudo useradd archivematica --uid 333 --gid 333 --create-home --home "$AMATICA_PROCESS_DIR" --shell /bin/false
 fi
 
 if [ "`id mysql 2>/dev/null`" = "" ]; then
   sudo groupadd mysql --gid 332
-  sudo useradd mysql --uid 332 --gid 332 --create-home --home /var/lib/mysql --shell /bin/false
+  sudo useradd mysql --uid 332 --gid 332 --create-home --home "$AMATICA_MYSQL_DIR" --shell /bin/false
 fi
 
 if [ "`id elasticsearch 2>/dev/null`" = "" ]; then
   sudo groupadd elasticsearch --gid 328
-  sudo useradd elasticsearch --uid 328 --gid 328 --create-home --home /var/lib/elasticsearch --shell /bin/false
+  sudo useradd elasticsearch --uid 328 --gid 328 --create-home --home "$AMATICA_ELASTIC_DIR" --shell /bin/false
 fi
 
 docker run -d \
@@ -122,6 +122,6 @@ docker run -d \
        -v $AMATICA_MYSQL_DIR:/var/lib/mysql \
        -v $AMATICA_LOG_DIR:/var/log \
        --name amatica \
-       uazlibraries/archivematica:1.6.1-beta1
+       uazlibraries/archivematica:1.6.1-beta2
 
 ```

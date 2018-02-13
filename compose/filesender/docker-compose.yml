@@ -1,0 +1,73 @@
+version: '2'
+services:
+  web:
+    image: 'uazlibraries/nginx-shibboleth'
+    restart: always
+    tty: true
+    links:
+      - fpm
+    ports:
+      - 81:81
+    volumes:
+      - run.php:/run/php
+      - filesender:/opt/filesender
+      - simplesaml:/opt/simplesamlphp
+      - ./nginx/conf.d:/etc/nginx/conf.d
+
+  fpm:
+    image: 'uazlibraries/filesender-phpfpm:2.0-beta3'
+    restart: always
+    links:
+      - db-host
+    environment:
+      - SMTP_SERVER=smtpgate.email.arizona.edu
+      - ADMIN_EMAIL=admin@email.arizona.edu
+      - ADMIN_PSWD=password
+      - FILESENDER_URL=http://localhost:81
+      - FILESENDER_AUTHTYPE=saml
+      - FILESENDER_AUTHSAML=static-user
+      - DB_HOST=db-host
+      - DB_NAME=filesender
+      - DB_USER=filesenderDBA
+      - DB_PASSWORD=filesenderPSWD
+    volumes:
+      - run.php:/run/php
+      - filesender:/opt/filesender
+      - simplesaml:/opt/simplesamlphp
+      - ./simplesamlphp/config/authsources.php:/opt/simplesamlphp/config/authsources.php
+
+  archivematica:
+    image: 'archivematica:1.6.1-beta2'
+    restart: always
+    links:
+      - db-host
+    ports:
+      - "80:80"
+      - "8000:8000"
+    environment:
+      - SMTP_DOMAIN=email.arizona.edu
+      - SMTP_HOST=smtpgate.mail.arizona.edu
+      - SMTP_FROM=admin@email.arizona.edu
+      - SMTP_ADMIN=admin@email.arizona.edu
+      - AMATICA_NOSERVICE=mysql,logfile
+      - DB_HOST=db-host
+      - DB_USER=amaticaDBA
+      - DB_PASSWORD=amaticaPSWD
+      - DB_DATABASE=MCP
+
+  db-host:
+    image: 'mysql'
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=insecure
+      - MYSQL_DATABASE=MCP
+      - MYSQL_USER=amaticaDBA
+      - MYSQL_PASSWORD=amaticaPSWD
+      - MYSQL_ALLOW_EMPTY_PASSWORD='false'
+    volumes:
+      - ./mysql/create-filesender-db.sql:/docker-entrypoint-initdb.d/create-filesender-db.sql
+
+volumes:
+  run.php:
+  filesender:
+  simplesaml:
