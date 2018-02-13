@@ -7,7 +7,7 @@ services:
     links:
       - fpm
     ports:
-      - 81:80
+      - 81:81
     volumes:
       - run.php:/run/php
       - filesender:/opt/filesender
