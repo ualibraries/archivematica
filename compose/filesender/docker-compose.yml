@@ -1,0 +1,55 @@
+version: '2'
+services:
+  web:
+    image: 'uazlibraries/nginx-shibboleth'
+    restart: always
+    tty: true
+    links:
+      - fpm
+    ports:
+      - "80:80"
+    volumes:
+      - run.php:/run/php
+      - filesender:/opt/filesender
+      - simplesaml:/opt/simplesamlphp
+      - ./nginx/conf.d:/etc/nginx/conf.d
+
+  fpm:
+    image: 'uazlibraries/filesender-phpfpm:2.0-beta3'
+    restart: always
+    links:
+      - db-host
+    environment:
+      - SMTP_SERVER=smtp.gmail.com:587
+      - SMTP_TLS=true
+      - SMTP_USER=dockertestfilesender
+      - SMTP_PSWD=thisisalongpassword
+      - ADMIN_EMAIL=dockertestfilesender@gmail.com
+      - ADMIN_PSWD=password
+      - FILESENDER_URL=http://localhost
+      - FILESENDER_AUTHTYPE=saml
+      - FILESENDER_AUTHSAML=static-user
+      - DB_HOST=db-host
+      - DB_NAME=filesender
+      - DB_USER=filesender
+      - DB_PASSWORD=filesender
+    volumes:
+      - run.php:/run/php
+      - filesender:/opt/filesender
+      - simplesaml:/opt/simplesamlphp
+      - ./simplesamlphp/config/authsources.php:/opt/simplesamlphp/config/authsources.php
+
+  db-host:
+    image: 'mysql'
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=insecure
+      - MYSQL_DATABASE=filesender
+      - MYSQL_USER=filesender
+      - MYSQL_PASSWORD=filesender
+      - MYSQL_ALLOW_EMPTY_PASSWORD='false'
+
+volumes:
+  run.php:
+  filesender:
+  simplesaml:
