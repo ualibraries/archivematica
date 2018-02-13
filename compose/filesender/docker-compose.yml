@@ -39,7 +39,23 @@ services:
       - simplesaml:/opt/simplesamlphp
       - ./simplesamlphp/config/authsources.php:/opt/simplesamlphp/config/authsources.php
 
-  db-host:
+  archivematica:
+    image: 'archivematica:1.6.1-beta2'
+    restart: always
+    links:
+      - db-host
+    environment:
+      - SMTP_DOMAIN=email.arizona.edu
+      - SMTP_HOST=smtpgate.mail.arizona.edu
+      - SMTP_FROM=admin@email.arizona.edu
+      - SMTP_ADMIN=glbrimhall@email.arizona.edu
+      - AMATICA_NOSERVICE=mysql,logfile
+      - DB_HOST=db-host
+      - DB_USER=filesender
+      - DB_PASSWORD=filesender
+      - DB_DATABASE=MCP
+
+db-host:
     image: 'mysql'
     restart: always
     environment:
