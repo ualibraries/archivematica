@@ -43,6 +43,9 @@ This release is still considered beta because only the following deployment use 
 
 1. [Throw-away self-contained test instance](#test-instance).
 2. [Self-contained instance, good across upgrades](#upgradeable)
+3. [External mysql](#external_mysql)
+4. [External nginx](#external_nginx)
+5. [Filesender integration](#filesender)
 
 
 ## Test Instance
