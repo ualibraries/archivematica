@@ -54,7 +54,7 @@ services:
       - SMTP_FROM=admin@email.arizona.edu
       - SMTP_ADMIN=admin@email.arizona.edu
       - AMATICA_NOSERVICE=mysql,logfile
-      - DASHBOARD_LISTEN=unix:/run/archivematica/dashboard.sock
+      - AMATICA_DASHBOARD_LISTEN=unix:/run/archivematica/dashboard.sock
       - DB_HOST=db-host
       - DB_USER=amaticaDBA
       - DB_PASSWORD=amaticaPSWD
