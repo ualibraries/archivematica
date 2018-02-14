@@ -79,6 +79,24 @@ rm -vf /etc/nginx/sites-enabled/default
 ln -vs /etc/nginx/sites-available/storage /etc/nginx/sites-enabled/storage
 ln -vs /etc/nginx/sites-available/dashboard.conf /etc/nginx/sites-enabled/dashboard.conf
 
+if [ "$DASHBOARD_LISTEN" != "" ]; then
+   sed -i -e "s|127.0.0.1:8002|$DASHBOARD_LISTEN|g" \
+       /etc/archivematica/dashboard.gunicorn-config.py
+
+   if [ "`echo $DASHBOARD_LISTEN | grep ^unix`" != "" ]; then
+     rm -f /etc/nginx/sites-enabled/dashboard.conf
+   fi
+fi
+
+if [ "$STORAGE_LISTEN" != "" ]; then
+   sed -i -e "s|127.0.0.1:8001|$STORAGE_LISTEN|g" \
+       /etc/archivematica/storage-service.gunicorn-config.py
+
+   if [ "`echo $STORAGE_LISTEN | grep ^unix`" != "" ]; then
+     rm -f /etc/nginx/sites-enabled/storage
+   fi
+fi
+
 # Update auto-start on bootup un-necessary with a docker container
 # update-rc.d elasticsearch                defaults 95 10
 # update-rc.d archivematica-storage-server defaults

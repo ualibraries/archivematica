@@ -5,7 +5,7 @@ DEFAULT_CONTAINER="amatica"
 
 CONTAINER=${4:-$DEFAULT_CONTAINER}
 REPOSITORY=${3:-archivematica}
-TAG=${2:-1.6.1-beta2}
+TAG=${2:-1.6.1-beta3}
 ACTION=${1:-BUILD}
 DAEMONIZE=-d
 
