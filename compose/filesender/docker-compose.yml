@@ -28,7 +28,7 @@ services:
       - SMTP_SERVER=smtpgate.email.arizona.edu
       - ADMIN_EMAIL=admin@email.arizona.edu
       - ADMIN_PSWD=password
-      - FILESENDER_URL=http://localhost:81
+      - FILESENDER_URL=http://localhost/upload
       - FILESENDER_AUTHTYPE=saml
       - FILESENDER_AUTHSAML=static-user
       - CHOWN_WWW=333:333
