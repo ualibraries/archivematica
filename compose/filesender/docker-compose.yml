@@ -75,8 +75,7 @@ services:
       - MYSQL_ALLOW_EMPTY_PASSWORD='false'
     volumes:
       - ./mysql/create-filesender-db.sql:/docker-entrypoint-initdb.d/create-filesender-db.sql
-#      - ./mysql-data:/var/lib/mysql
-# Enable the above ./mysql-data to have startup go faster
+      - ./mysql-data:/var/lib/mysql
 
 volumes:
   run.php:
