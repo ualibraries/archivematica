@@ -44,7 +44,7 @@ services:
       - ./simplesamlphp/config/authsources.php:/opt/simplesamlphp/config/authsources.php
 
   amatica:
-    image: 'archivematica:1.6.1-beta3'
+    image: 'uazlibraries/archivematica:1.6.1-beta3'
     restart: always
     links:
       - db-host
