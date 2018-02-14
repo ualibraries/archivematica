@@ -65,7 +65,7 @@ services:
       - dashboard:/usr/share/archivematica/dashboard
 
   db-host:
-    image: 'mysql'
+    build: ./mysql
     restart: always
     environment:
       - MYSQL_ROOT_PASSWORD=insecure
@@ -74,7 +74,6 @@ services:
       - MYSQL_PASSWORD=amaticaPSWD
       - MYSQL_ALLOW_EMPTY_PASSWORD='false'
     volumes:
-      - ./mysql/create-filesender-db.sql:/docker-entrypoint-initdb.d/create-filesender-db.sql
       - ./mysql-data:/var/lib/mysql
 
 volumes:
