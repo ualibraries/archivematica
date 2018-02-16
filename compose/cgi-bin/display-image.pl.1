@@ -1,0 +1,20 @@
+#!/usr/bin/perl -w
+
+#use strict;
+#use File::Copy;
+
+# Do something with $ENV{REQUEST_URI}
+#`cat ./fa86249f-00ef-4a10-85cd-05e996a356eb/de7da20b-dc73-494e-8781-b0a268414c3a.jpg`;
+
+open IMAGE, "./fa86249f-00ef-4a10-85cd-05e996a356eb/de7da20b-dc73-494e-8781-b0a268414c3a.jpg";
+
+#assume is a jpeg...
+my ($image, $buff);
+while(read IMAGE, $buff, 1024) {
+    $image .= $buff;
+}
+close IMAGE;
+
+print "Content-type: image/jpeg\n\n";
+print $image;
+

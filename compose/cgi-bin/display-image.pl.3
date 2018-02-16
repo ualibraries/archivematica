@@ -1,0 +1,39 @@
+#!/usr/bin/perl -w
+
+use strict;
+use Encode;
+#use File::Copy;
+
+# Do something with $ENV{REQUEST_URI}
+#`cat ./fa86249f-00ef-4a10-85cd-05e996a356eb/de7da20b-dc73-494e-8781-b0a268414c3a.jpg`;
+`echo $ENV{REQUEST_URI} >> /tmp/access.log`;
+my ($fname) =($ENV{REQUEST_URI} =~ m|^/thumb/(\S+)$|ga);
+my ($guid) =($fname =~ m/([[:xdigit:]]{8}-[[:xdigit:]]{4}-[[:xdigit:]]{4}-[[:xdigit:]]{4}-([[:xdigit:]]){12}).*$/ga);
+my ($ftype) =($fname =~ m/\.(\S+)$/ga);
+#my $file = `find ./DIPsStore -type f -path  thumbnails -prune -o -name *$guid*`;
+my $file = `find ./DIPsStore -type f -name $fname`;
+chomp( $file );
+
+#print "$guid $ftype $file\n";
+open IMAGE, "$file";
+
+#assume is a jpeg...
+my ($image, $buff);
+while(read IMAGE, $buff, 4096) {
+    $image .= $buff;
+}
+close IMAGE;
+my $content_length=length($image);
+#my $content_length=length(Encode::encode('UTF-8', $image));
+
+if ( $ftype eq "jpg" ) {
+  print "Content-type: image/jpeg\n"; 
+}
+else {
+  print "Content-type: application/$ftype\n"; 
+}
+print "Transfer-Encoding: identity\n"; 
+print "Content-length: $content_length\n\n"; 
+
+print $image;
+
