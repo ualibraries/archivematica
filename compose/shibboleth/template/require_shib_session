@@ -1,0 +1,15 @@
+  include shib_clear_headers;
+  shib_request /shibauthorizer;
+
+  # This next shib_request_use_headers should not be necessary, but it is for now.
+  shib_request_use_headers on;
+  include shib_fastcgi_params;
+
+  # Only attribute from testshib.org really useable is EPPN
+  shib_request_set $shib_eppn $upstream_http_variable_eppn;
+  fastcgi_param EPPN $shib_eppn;
+
+  # Enable to spoof or quickly test filesender with shibboleth authentication
+  #fastcgi_param HTTP_SHIB_CN 'Test User';
+  #fastcgi_param HTTP_SHIB_UID 'test_username';
+  #fastcgi_param HTTP_SHIB_MAIL 'test_user@abcde.edu';
