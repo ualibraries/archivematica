@@ -32,8 +32,8 @@ https://wiki.shibboleth.net/confluence/display/SHIB2/NativeSPConfiguration
                 redirectToSSL="443">
             <!-- Path name="/" / -->
             <!-- Path name="/shibboleth-login"/ -->
-            <Path name="/index.php"/>
-            <Path name="/rest.php"/>
+            <!-- Path name="/index.php"/ -->
+            <!-- Path name="/rest.php"/ -->
             <!-- Path name="/rest"/ -->
             <!-- Path name="/Shibboleth.sso" / -->
                 <!-- Path name="secure" authType="shibboleth" requireSession="true"/ -->
