@@ -20,9 +20,9 @@ services:
       - run.archivematica:/run/archivematica
       - filesender:/opt/filesender
       - simplesaml:/opt/simplesamlphp
-      - dashboard:/opt/dashboard
+      - dashboard-static:/opt/dashboard
+      - storage-static:/opt/storage
       - ./shibboleth:/etc/shibboleth
-      - ./nginx/certs:/etc/nginx/certs
       - ./nginx/conf.d:/etc/nginx/conf.d
       - ./persistant/log/web:/var/log/nginx
 
@@ -39,7 +39,7 @@ services:
       - ADMIN_EMAIL=dockertestfilesender@gmail.com
       - ADMIN_PSWD=password
       - FILESENDER_URL=https://{PUBLICIP}
-      - FILESENDER_LOGOUT_URL=https://{PUBLICIP}:8443
+      - FILESENDER_LOGOUT_URL=https://{PUBLICIP}/dashboard/
       - FILESENDER_STORAGE=FilesystemPreserveName
       - FILESENDER_AUTHTYPE=shibboleth
       - MAIL_ATTR=EPPN
@@ -80,7 +80,8 @@ services:
       - ./persistant/clamav:/var/lib/clamav
       - ./persistant/archivematica:/var/archivematica
       - ./persistant/filesender:/home
-      - dashboard:/usr/share/archivematica/dashboard
+      - dashboard-static:/usr/share/archivematica/dashboard
+      - storage-static:/usr/share/python/archivematica-storage-service
 
   shib:
     build: ./shib
@@ -113,5 +114,6 @@ volumes:
   run.archivematica:
   filesender:
   simplesaml:
-  dashboard:
+  dashboard-static:
+  storage-static:
 
