@@ -81,9 +81,11 @@ METADATA_FILE="docker-filesender-phpfpm-shibboleth-$HOSTIP-metadata.xml"
 
 if [ ! -f "$METADATA_FILE" ]; then
 
-echo "STOPPING any docker-compose created images"
-docker-compose rm -fsv
-echo "y" | docker volume prune
+if [ -f docker-compose.yml ]; then
+  echo "STOPPING any docker-compose created images"
+  docker-compose rm -fsv
+  echo "y" | docker volume prune
+fi
 
 DEVICE=$HOSTIP
 SUBJECT="/C=FC/postalCode=FakeZip/ST=FakeState/L=FakeCity/streetAddress=FakeStreet/O=FakeOrganization/OU=FakeDepartment/CN=${DEVICE}"
