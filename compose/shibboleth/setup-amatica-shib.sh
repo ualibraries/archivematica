@@ -1,7 +1,7 @@
 #!/bin/bash
 #set -x
 
-REQUIRED="hostname perl sed openssl docker-compose nc curl id /usr/sbin/addgroup /usr/sbin/useradd"
+REQUIRED="hostname perl sed openssl docker-compose nc curl id /usr/sbin/addgroup /usr/sbin/adduser"
 
 for UTILITY in $REQUIRED; do
   WHICH_CMD="`which $UTILITY`"
@@ -51,8 +51,8 @@ for USER in $USER_LIST; do
   #sudo deluser --remove-home $USER
   if [ "`id $USER 2>/dev/null`" = "" ]; then
     echo "CREATEUSER: $USER with uid:gid $USER_ID:$USER_ID"
-    sudo addgroup $USER --gid $USER_ID
-    sudo useradd --force-badname $USER --uid $USER_ID --gid $USER_ID --create-home --home /var/lib/$USER --shell /bin/false
+    sudo addgroup $USER --force-badname --gid $USER_ID
+    sudo adduser --system $USER --force-badname --uid $USER_ID --gid $USER_ID --home /var/lib/$USER --shell /bin/false
     mkdir -p "$PERSISTANT_DIR/$USER"
     sudo chown $USER.$USER "$PERSISTANT_DIR/$USER"
   fi
@@ -118,7 +118,7 @@ echo
 create_self_signed_cert shibboleth sp-key.pem sp-csr.pem sp-cert.pem
 
 # Create ngins self-signed certs ( browser will report "untrusted" error )
-create_self_signed_cert nginx/conf.d nginx-ssl.key nginx-ssl.csr nginx-ssl.crt
+create_self_signed_cert nginx/conf.d host.key host.csr host.crt
 
 function sed_file {
   local SRCFILE="$1"
