@@ -1,4 +1,3 @@
-docker-compose.yml
+/docker-compose.yml
 docker-filesender-phpfpm-shibboleth-*
-persistant/
-
+/persistant/

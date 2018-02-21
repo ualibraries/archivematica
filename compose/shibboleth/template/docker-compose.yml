@@ -1,0 +1,115 @@
+version: '2'
+services:
+  web:
+    build: ./web
+    restart: always
+    tty: true
+    links:
+      - fpm
+      - amatica
+      - shib
+    ports:
+      - 80:80
+      - 443:443
+      - 8000:8000
+      - 8443:8443
+      - 8089:8089
+    volumes:
+      - run.php:/run/php
+      - run.shibboleth:/run/shibboleth
+      - run.archivematica:/run/archivematica
+      - filesender:/opt/filesender
+      - simplesaml:/opt/simplesamlphp
+      - dashboard:/opt/dashboard
+      - ./shibboleth:/etc/shibboleth
+      - ./nginx/certs:/etc/nginx/certs
+      - ./nginx/conf.d:/etc/nginx/conf.d
+      - ./persistant/log/nginx:/var/log/nginx
+
+  fpm:
+    image: 'uazlibraries/filesender-phpfpm:branch-StorageFilesystemPreserveName'
+    restart: always
+    links:
+      - db-host
+    environment:
+      - SMTP_SERVER=smtp.gmail.com:587
+      - SMTP_TLS=true
+      - SMTP_USER=dockertestfilesender
+      - SMTP_PSWD=thisisalongpassword
+      - ADMIN_EMAIL=dockertestfilesender@gmail.com
+      - ADMIN_PSWD=password
+      - FILESENDER_URL=https://{PUBLICIP}
+      - FILESENDER_LOGOUT_URL=https://{PUBLICIP}:8443
+      - FILESENDER_STORAGE=FilesystemPreserveName
+      - FILESENDER_AUTHTYPE=shibboleth
+      - MAIL_ATTR=EPPN
+      - NAME_ATTR=EPPN
+      - UID_ATTR=EPPN
+      - CHOWN_WWW=333:333
+      - DB_HOST=db-host
+      - DB_NAME=filesender
+      - DB_USER=filesenderDBA
+      - DB_PASSWORD=filesenderPSWD
+    volumes:
+      - run.php:/run/php
+      - ./persistant/filesender/:/data
+      - filesender:/opt/filesender
+      - simplesaml:/opt/simplesamlphp
+
+  amatica:
+    image: 'uazlibraries/archivematica:1.6.1-beta3'
+    restart: always
+    links:
+      - db-host
+    environment:
+      - SMTP_DOMAIN=gmail.com
+      - SMTP_HOST=smtp.gmail.com:587
+      - SMTP_FROM=dockertestfilesender@gmail.com
+      - SMTP_ADMIN=dockertestfilesender@gmail.com
+      - AMATICA_NOSERVICE=mysql
+      - DB_HOST=db-host
+      - DB_USER=amaticaDBA
+      - DB_PASSWORD=amaticaPSWD
+      - DB_DATABASE=MCP
+    volumes:
+      - run.archivematica:/run/archivematica
+      - ./persistant/log/archivematica:/var/log
+      - ./persistant/elasticsearch:/var/lib/elasticsearch
+      - ./persistant/gearman:/var/lib/gearman
+      - ./persistant/clamav:/var/lib/clamav
+      - ./persistant/archivematica:/var/archivematica
+      - ./persistant/filesender:/home
+      - dashboard:/usr/share/archivematica/dashboard
+
+  shib:
+    build: ./shib
+    restart: always
+    volumes:
+      - ./shibboleth:/etc/shibboleth
+      - ./supervisor/conf.d:/etc/supervisor/conf.d
+      - ./persistant/log/shibboleth:/var/log/shibboleth
+      - ./persistant/log/supervisor:/var/log/supervisor
+      - ./persistant/archivematica:/var/archivematica
+      - ./dip-display:/opt/dip-display
+      - run.shibboleth:/run/shibboleth
+
+  db-host:
+    build: ./mysql
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=insecure
+      - MYSQL_DATABASE=MCP
+      - MYSQL_USER=amaticaDBA
+      - MYSQL_PASSWORD=amaticaPSWD
+      - MYSQL_ALLOW_EMPTY_PASSWORD='false'
+    volumes:
+      - ./persistant/mysql:/var/lib/mysql
+
+volumes:
+  run.php:
+  run.shibboleth:
+  run.archivematica:
+  filesender:
+  simplesaml:
+  dashboard:
+
