@@ -54,7 +54,9 @@ for USER in $USER_LIST; do
     echo "CREATEUSER: $USER with uid:gid $USER_ID:$USER_ID"
     sudo addgroup $USER --force-badname --gid $USER_ID
     sudo adduser --system $USER --force-badname --uid $USER_ID --gid $USER_ID --home /var/lib/$USER --shell /bin/false
-    mkdir -p "$PERSISTANT_DIR/$USER"
+  fi
+  if [ ! -d "$PERSISTANT_DIR/$USER" ]; then
+    mkdir -vp "$PERSISTANT_DIR/$USER"
     sudo chown $USER.$USER "$PERSISTANT_DIR/$USER"
   fi
   let USER_ID=$((++USER_INC + 327))
