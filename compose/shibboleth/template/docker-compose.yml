@@ -22,6 +22,7 @@ services:
       - simplesaml:/opt/simplesamlphp
       - dashboard-static:/opt/dashboard
       - storage-static:/opt/storage
+      - ./web/brand:/opt/brand
       - ./shibboleth:/etc/shibboleth
       - ./nginx/conf.d:/etc/nginx/conf.d
       - ./persistant/log/web:/var/log/nginx
