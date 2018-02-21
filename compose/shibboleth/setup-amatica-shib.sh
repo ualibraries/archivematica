@@ -22,6 +22,7 @@ done
 echo "WORKINGDIR: $SETUP_DIR"
 cd $SETUP_DIR
 PERSISTANT_DIR=./persistant
+LOGGING_DIR=./log
 
 GIVENIP=$1
 HOSTIP=$1
@@ -61,15 +62,15 @@ done
 
 LOGDIR_LIST="shib amatica web fpm mysql supervisor"
 
-if [ ! -d "$PERSISTANT_DIR/log/amatica/archivematica" ]; then
+if [ ! -d "$LOGGING_DIR/amatica/archivematica" ]; then
 for LOGDIR in $LOGDIR_LIST; do
-  echo "CREATELOGDIR: $PERSISTANT_DIR/log/$LOGDIR"
-  sudo mkdir -p "$PERSISTANT_DIR/log/$LOGDIR"
-  sudo chmod 777 "$PERSISTANT_DIR/log/$LOGDIR"
+  echo "CREATELOGDIR: $LOGGING_DIR/$LOGDIR"
+  sudo mkdir -p "$LOGGING_DIR/$LOGDIR"
+  sudo chmod 777 "$LOGGING_DIR/$LOGDIR"
 done
 
-  cd "$PERSISTANT_DIR/log"
-  sudo tar -xzvf ../../template/var.log.archivematica.tar.gz
+  cd "$LOGGING_DIR"
+  sudo tar -xzvf ../template/var.log.archivematica.tar.gz
   sudo mv var.log.archivematica/* amatica
   sudo rmdir var.log.archivematica
   cd ../..
@@ -115,10 +116,10 @@ function create_self_signed_cert {
 
 echo
 # Create shibboleth self-signed certs
-create_self_signed_cert shibboleth sp-key.pem sp-csr.pem sp-cert.pem
+create_self_signed_cert shib/shibboleth sp-key.pem sp-csr.pem sp-cert.pem
 
 # Create ngins self-signed certs ( browser will report "untrusted" error )
-create_self_signed_cert nginx/conf.d host.key host.csr host.crt
+create_self_signed_cert web/nginx/conf.d host.key host.csr host.crt
 
 function sed_file {
   local SRCFILE="$1"
@@ -130,11 +131,11 @@ function sed_file {
 
 echo
 echo "CONFIGURING shibboleth"
-sed_file template/shibboleth2.xml shibboleth/shibboleth2.xml
+sed_file template/shibboleth2.xml shib/shibboleth/shibboleth2.xml
 
 echo "CONFIGURING nginx"
-sed_file template/port443.conf nginx/conf.d/port443.conf
-sed_file template/port8089.conf nginx/conf.d/port8089.conf
+sed_file template/port443.conf web/nginx/conf.d/port443.conf
+sed_file template/port8089.conf web/nginx/conf.d/port8089.conf
 
 echo "CONFIGURING docker-compose"
 sed_file template/docker-compose.yml docker-compose.yml
