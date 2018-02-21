@@ -24,7 +24,7 @@ services:
       - ./shibboleth:/etc/shibboleth
       - ./nginx/certs:/etc/nginx/certs
       - ./nginx/conf.d:/etc/nginx/conf.d
-      - ./persistant/log/nginx:/var/log/nginx
+      - ./persistant/log/web:/var/log/nginx
 
   fpm:
     image: 'uazlibraries/filesender-phpfpm:branch-StorageFilesystemPreserveName'
@@ -52,6 +52,7 @@ services:
       - DB_PASSWORD=filesenderPSWD
     volumes:
       - run.php:/run/php
+      - ./persistant/log/fpm:/var/log/php-fpm
       - ./persistant/filesender/:/data
       - filesender:/opt/filesender
       - simplesaml:/opt/simplesamlphp
@@ -73,7 +74,7 @@ services:
       - DB_DATABASE=MCP
     volumes:
       - run.archivematica:/run/archivematica
-      - ./persistant/log/archivematica:/var/log
+      - ./persistant/log/amatica:/var/log
       - ./persistant/elasticsearch:/var/lib/elasticsearch
       - ./persistant/gearman:/var/lib/gearman
       - ./persistant/clamav:/var/lib/clamav
@@ -103,6 +104,7 @@ services:
       - MYSQL_PASSWORD=amaticaPSWD
       - MYSQL_ALLOW_EMPTY_PASSWORD='false'
     volumes:
+      - ./persistant/log/mysql:/var/log/mysql
       - ./persistant/mysql:/var/lib/mysql
 
 volumes:
