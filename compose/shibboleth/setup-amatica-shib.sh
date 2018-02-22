@@ -140,6 +140,8 @@ sed_file template/shibboleth2.xml shib/shibboleth/shibboleth2.xml
 echo "CONFIGURING nginx"
 sed_file template/port443.conf web/nginx/conf.d/port443.conf
 sed_file template/port8089.conf web/nginx/conf.d/port8089.conf
+sed_file template/fastcgi_filesender web/nginx/conf.d/fastcgi_filesender
+sed_file template/require_shib_session web/nginx/conf.d/require_shib_session
 
 echo "CONFIGURING docker-compose"
 sed_file template/docker-compose.yml docker-compose.yml
