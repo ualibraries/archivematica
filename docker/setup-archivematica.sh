@@ -3,8 +3,8 @@
 # Change uid:gid permissions per CHOWN_xxxx environment variables
 ./chown-archivematica.sh
 
-if [ "$SMTP_HOST" != "" ]; then
-  sed -i "s/smtp.abcd.edu/$SMTP_HOST/g" ./debconf-set-selections-postfix.sh
+if [ "$SMTP_SERVER" != "" ]; then
+  sed -i "s/smtp.abcd.edu/$SMTP_SERVER/g" ./debconf-set-selections-postfix.sh
   sed -i "s/email.abcd.edu/$SMTP_DOMAIN/g" ./debconf-set-selections-postfix.sh
 fi
 

@@ -66,13 +66,14 @@ services:
       - SMTP_HOST=smtp.gmail.com:587
       - SMTP_FROM=dockertestfilesender@gmail.com
       - SMTP_ADMIN=dockertestfilesender@gmail.com
-      - AMATICA_NOSERVICE=mysql
+      - AMATICA_NOSERVICE=mysql,logfile
       - DB_HOST=db-host
       - DB_USER=amaticaDBA
       - DB_PASSWORD=amaticaPSWD
       - DB_DATABASE=MCP
     volumes:
       - run.archivematica:/run/archivematica
+      - ./amatica/overlay:/opt/archivematica
       - ./log/amatica:/var/log
       - ./persistant/elasticsearch:/var/lib/elasticsearch
       - ./persistant/gearman:/var/lib/gearman
@@ -102,7 +103,6 @@ services:
       - MYSQL_PASSWORD=amaticaPSWD
       - MYSQL_ALLOW_EMPTY_PASSWORD='false'
     volumes:
-      - ./log/mysql:/var/log/mysql
       - ./persistant/mysql:/var/lib/mysql
 
 volumes:
