@@ -113,3 +113,14 @@ fi
 
 service elasticsearch stop
 service mysql stop
+
+# Overlay custom files, if they exist
+OVERLAY_DIR=${AMATICA_OVERLAY_DIR:-"/opt/archivematica"}
+
+if [ -d "$OVERLAY_DIR" ]; then
+  echo "OVERLAY: $OVERLAY_DIR"
+  cd $OVERLAY_DIR
+  cp -vR * /
+  cd -
+fi
+

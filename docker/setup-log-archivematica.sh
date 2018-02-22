@@ -47,16 +47,20 @@ archivematica/dashboard/gunicorn.error_log \
 archivematica/storage-service/gunicorn.error_log \
 nginx/access.log \
 mysql/error.log"
-    
-  for FILE in $LOGFILES; do
-      rm -f "/var/log/$FILE"
-      ln -sf /dev/stdout "/var/log/$FILE"
-  done
-  
-  for FILE in $ERRFILES; do
-      rm -f "/var/log/$FILE"
-      ln -sf /dev/stderr "/var/log/$FILE"
-  done
+
+# For now disabling log to stdout, it does not seem
+# to work with gearman, gunicorn, or clamav
+# The 1.7 release appears to have fixed this since
+# it is built natively with docker
+#  for FILE in $LOGFILES; do
+#      rm -f "/var/log/$FILE"
+#      ln -sf /dev/stdout "/var/log/$FILE"
+#  done
+#  
+#  for FILE in $ERRFILES; do
+#      rm -f "/var/log/$FILE"
+#      ln -sf /dev/stderr "/var/log/$FILE"
+#  done
 fi
 
 echo " * Archivematica Setup Finished."
