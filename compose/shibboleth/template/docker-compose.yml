@@ -22,6 +22,7 @@ services:
       - simplesaml:/opt/simplesamlphp
       - ./web/brand:/opt/brand
       - ./web/nginx/conf.d:/etc/nginx/conf.d
+      - ./shib/shibboleth:/etc/shibboleth
       - ./log/web:/var/log/nginx
 
   fpm:
