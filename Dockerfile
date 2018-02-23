@@ -113,8 +113,6 @@ rm -vfr /usr/share/archivematica/docker/var.lib.clamav && \
 mkdir /var/log/archivematica && \
 chown -vR archivematica.archivematica /var/log/archivematica
 
-VOLUME [ "/var/lib/elasticsearch", "/var/lib/gearman", "/var/lib/clamav", "/var/lib/mysql", "/var/archivematica", "/var/log" ]
-
 EXPOSE 80 443 8000
 
 # Auto-start
