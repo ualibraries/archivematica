@@ -3,7 +3,7 @@ Archivematica in a self-contained docker image
 
 This docker image was built from archivematica's installation [instructions](https://www.archivematica.org/en/docs/archivematica-1.6/admin-manual/installation/installation/)
 
-CHArchivematica is a complex piece of software, and to create a container that will keep state across upgrades, the following docker container creation command is recommended:
+Archivematica is a complex piece of software, and to create a container that will keep state across upgrades, the following docker container creation command is recommended:
 
 ```
 #!/bin/sh
