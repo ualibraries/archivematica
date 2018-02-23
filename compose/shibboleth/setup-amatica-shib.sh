@@ -62,6 +62,17 @@ for USER in $USER_LIST; do
   let USER_ID=$((++USER_INC + 327))
 done
 
+# Ensure archivematica persistant dirs exist
+AMATICA_LIST="filesender AIPstore"
+USER=archivematica
+
+for AMATICA_DIR in $AMATICA_LIST; do
+  if [ ! -d "$PERSISTANT_DIR/$AMATICA_DIR" ]; then
+    mkdir -vp "$PERSISTANT_DIR/$AMATICA_DIR"
+    sudo chown $USER.$USER "$PERSISTANT_DIR/$AMATICA_DIR"
+  fi
+done
+
 LOGDIR_LIST="shib amatica web fpm mysql supervisor"
 
 if [ ! -d "$LOGGING_DIR/amatica/archivematica" ]; then

@@ -1,4 +1,4 @@
-version: '2'
+version: '3'
 services:
   web:
     build: ./web
@@ -23,7 +23,7 @@ services:
       - ./web/brand:/opt/brand
       - ./web/nginx/conf.d:/etc/nginx/conf.d
       - ./shib/shibboleth:/etc/shibboleth
-      - ./log/web:/var/log/nginx
+      - ${NGINX_LOG_DIR:-./log/web}:/var/log/nginx
 
   fpm:
     image: 'uazlibraries/filesender-phpfpm:branch-StorageFilesystemPreserveName'
@@ -51,8 +51,8 @@ services:
       - DB_PASSWORD=filesenderPSWD
     volumes:
       - run.php:/run/php
-      - ./log/fpm:/var/log/php-fpm
-      - ./persistant/filesender/:/data
+      - ${FILESENDER_LOG_DIR:-./log/fpm}:/var/log/php-fpm
+      - ${FILESENDER_DAT_DIR:-./persistant/filesender}:/data
       - filesender:/opt/filesender
       - simplesaml:/opt/simplesamlphp
 
@@ -63,9 +63,9 @@ services:
       - db-host
     environment:
       - SMTP_DOMAIN=gmail.com
-      - SMTP_HOST=smtp.gmail.com:587
+      - SMTP_SERVER=smtp.gmail.com:587
       - SMTP_FROM=dockertestfilesender@gmail.com
-      - SMTP_ADMIN=dockertestfilesender@gmail.com
+      - ADMIN_EMAIL=dockertestfilesender@gmail.com
       - AMATICA_NOSERVICE=mysql,logfile
       - DB_HOST=db-host
       - DB_USER=amaticaDBA
@@ -74,24 +74,25 @@ services:
     volumes:
       - run.archivematica:/run/archivematica
       - ./amatica/overlay:/opt/archivematica
-      - ./log/amatica:/var/log
-      - ./persistant/elasticsearch:/var/lib/elasticsearch
-      - ./persistant/gearman:/var/lib/gearman
-      - ./persistant/clamav:/var/lib/clamav
-      - ./persistant/archivematica:/var/archivematica
-      - ./persistant/filesender:/home
+      - ${AMATICA_LOG_DIR:-./log/amatica}:/var/log
+      - ${ELASTIC_DAT_DIR:-./persistant/elasticsearch}:/var/lib/elasticsearch
+      - ${GEARMAN_DAT_DIR:-/persistant/gearman}:/var/lib/gearman
+      - ${CLAMAV_DAT_DIR:-/persistant/clamav}:/var/lib/clamav
+      - ${AMATICA_INC_DIR:-/persistant/filesender}:/home
+      - ${AMATICA_DAT_DIR:-/persistant/archivematica}:/var/archivematica
+      - ${AMATICA_DST_DIR:-/persistant/AIPstore}:/var/archivematica/www
 
   shib:
     build: ./shib
     restart: always
     volumes:
+      - run.shibboleth:/run/shibboleth
       - ./shib/shibboleth:/etc/shibboleth
       - ./shib/supervisor/conf.d:/etc/supervisor/conf.d
       - ./shib/dip-display:/opt/dip-display
-      - ./log/shibboleth:/var/log/shibboleth
-      - ./log/supervisor:/var/log/supervisor
-      - ./persistant/archivematica:/var/archivematica
-      - run.shibboleth:/run/shibboleth
+      - ${SHIBBOLETH_LOG_DIR:-./log/shibboleth}:/var/log/shibboleth
+      - ${SUPERVISOR_LOG_DIR:-./log/supervisor}:/var/log/supervisor
+      - ${AMATICA_DST_DIR:-./persistant/AIPstore}:/var/archivematica/www
 
   db-host:
     build: ./mysql
@@ -103,7 +104,7 @@ services:
       - MYSQL_PASSWORD=amaticaPSWD
       - MYSQL_ALLOW_EMPTY_PASSWORD='false'
     volumes:
-      - ./persistant/mysql:/var/lib/mysql
+      - ${MYSQL_DAT_DIR:-./persistant/mysql}:/var/lib/mysql
 
 volumes:
   run.php:
