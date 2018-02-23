@@ -15,6 +15,7 @@ mkdir -p /run/archivematica && \
 chown archivematica.archivematica /run/archivematica
 
 COPY docker/setup-archivematica.sh /usr/share/archivematica/docker
+COPY docker/setup-log-archivematica.sh /usr/share/archivematica/docker
 
 #chown -R archivematica.archivematica /usr/share/archivematica/dashboard && \
 #chown -R archivematica.archivematica /usr/lib/archivematica/storage-service

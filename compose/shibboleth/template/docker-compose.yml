@@ -76,10 +76,10 @@ services:
       - ./amatica/overlay:/opt/archivematica
       - ${AMATICA_LOG_DIR:-./log/amatica}:/var/log
       - ${ELASTIC_DAT_DIR:-./persistant/elasticsearch}:/var/lib/elasticsearch
-      - ${GEARMAN_DAT_DIR:-/persistant/gearman}:/var/lib/gearman
-      - ${CLAMAV_DAT_DIR:-/persistant/clamav}:/var/lib/clamav
-      - ${AMATICA_INC_DIR:-/persistant/filesender}:/home
-      - ${AMATICA_DAT_DIR:-/persistant/archivematica}:/var/archivematica
+      - ${GEARMAN_DAT_DIR:-./persistant/gearman}:/var/lib/gearman
+      - ${CLAMAV_DAT_DIR:-./persistant/clamav}:/var/lib/clamav
+      - ${AMATICA_INC_DIR:-./persistant/filesender}:/home
+      - ${AMATICA_DAT_DIR:-./persistant/archivematica}:/var/archivematica
 
   shib:
     build: ./shib
