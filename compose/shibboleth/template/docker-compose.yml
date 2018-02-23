@@ -80,7 +80,6 @@ services:
       - ${CLAMAV_DAT_DIR:-/persistant/clamav}:/var/lib/clamav
       - ${AMATICA_INC_DIR:-/persistant/filesender}:/home
       - ${AMATICA_DAT_DIR:-/persistant/archivematica}:/var/archivematica
-      - ${AMATICA_DST_DIR:-/persistant/AIPstore}:/var/archivematica/www
 
   shib:
     build: ./shib
@@ -92,7 +91,6 @@ services:
       - ./shib/dip-display:/opt/dip-display
       - ${SHIBBOLETH_LOG_DIR:-./log/shibboleth}:/var/log/shibboleth
       - ${SUPERVISOR_LOG_DIR:-./log/supervisor}:/var/log/supervisor
-      - ${AMATICA_DST_DIR:-./persistant/AIPstore}:/var/archivematica/www
 
   db-host:
     build: ./mysql
@@ -113,3 +111,6 @@ volumes:
   filesender:
   simplesaml:
 
+
+#      - ${AMATICA_DST_DIR:-/persistant/AIPstore}:/var/archivematica/www
+#      - ${AMATICA_DST_DIR:-./persistant/AIPstore}:/var/archivematica/www

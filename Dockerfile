@@ -19,7 +19,7 @@ COPY docker/setup-archivematica.sh /usr/share/archivematica/docker
 #chown -R archivematica.archivematica /usr/share/archivematica/dashboard && \
 #chown -R archivematica.archivematica /usr/lib/archivematica/storage-service
 
-VOLUME [ "/var/lib/elasticsearch", "/var/lib/gearman", "/var/lib/clamav", "/var/lib/mysql", "/var/archivematica", "/var/log", "/usr/share/archivematica/dashboard", "/usr/share/python/archivematica-storage-service", "/run/archivematica" ]
+#VOLUME [ "/var/lib/elasticsearch", "/var/lib/gearman", "/var/lib/clamav", "/var/lib/mysql", "/var/log", "/usr/share/archivematica/dashboard", "/usr/share/python/archivematica-storage-service", "/run/archivematica" ]
 
 EXPOSE 80 443 8000 8001 8002
 
