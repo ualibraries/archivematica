@@ -68,7 +68,7 @@ USER=archivematica
 
 for AMATICA_DIR in $AMATICA_LIST; do
   if [ ! -d "$PERSISTANT_DIR/$AMATICA_DIR" ]; then
-    mkdir -vp "$PERSISTANT_DIR/$AMATICA_DIR"
+    sudo mkdir -vp "$PERSISTANT_DIR/$AMATICA_DIR"
     sudo chown $USER.$USER "$PERSISTANT_DIR/$AMATICA_DIR"
   fi
 done
@@ -78,12 +78,12 @@ LOGDIR_LIST="shib amatica web fpm mysql supervisor"
 if [ ! -d "$LOGGING_DIR/amatica/archivematica" ]; then
 for LOGDIR in $LOGDIR_LIST; do
   echo "CREATELOGDIR: $LOGGING_DIR/$LOGDIR"
-  sudo mkdir -p "$LOGGING_DIR/$LOGDIR"
+  sudo mkdir -vp "$LOGGING_DIR/$LOGDIR"
   sudo chmod 777 "$LOGGING_DIR/$LOGDIR"
 done
 
   cd "$LOGGING_DIR"
-  sudo tar -xzvf $WORKING_DIR/template/var.log.archivematica.tar.gz
+  sudo tar -xzvf $SETUP_DIR/template/var.log.archivematica.tar.gz
   sudo mv var.log.archivematica/* amatica
   sudo rmdir var.log.archivematica
   cd ..
