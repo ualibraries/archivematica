@@ -158,6 +158,20 @@ echo "CONFIGURING docker-compose"
 sed_file template/docker-compose.yml docker-compose.yml
 
 echo "CREATING docker containers in background"
+
+export NGINX_LOG_DIR="$LOGGING_DIR/web"
+export SHIBBOLETH_LOG_DIR="$LOGGING_DIR/shibboleth"
+export SUPERVISOR_LOG_DIR="$LOGGING_DIR/supervisor"
+export AMATICA_LOG_DIR="$LOGGING_DIR/amatica"
+export FILESENDER_LOG_DIR="$LOGGING_DIR/fpm"
+export FILESENDER_DAT_DIR="$PERSISTANT_DIR/filesender"
+export ELASTIC_DAT_DIR="$PERSISTANT_DIR/elasticsearch"
+export GEARMAN_DAT_DIR="$PERSISTANT_DIR/gearman"
+export CLAMAV_DAT_DIR="$PERSISTANT_DIR/clamav"
+export AMATICA_INC_DIR="$PERSISTANT_DIR/filesender"
+export AMATICA_DAT_DIR="$PERSISTANT_DIR/archivematica"
+export MYSQL_DAT_DIR="$PERSISTANT_DIR/mysql"
+
 docker-compose up -d
 
 echo
