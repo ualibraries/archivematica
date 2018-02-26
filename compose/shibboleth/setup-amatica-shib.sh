@@ -21,11 +21,11 @@ done
 
 echo "WORKINGDIR: $SETUP_DIR"
 cd $SETUP_DIR
-PERSISTANT_DIR=./persistant
-LOGGING_DIR=./log
 
 GIVENIP=$1
 HOSTIP=$1
+PERSISTANT_DIR=${2:-./persistant}
+LOGGING_DIR=${3:-./log}
 
 if [ "$HOSTIP" = "" ]; then
   HOSTIP=`hostname -I 2>&1 | perl -ne '@ip = grep( !/^(192.168|10|172.[1-3]\d)./, split(/\s/)); print join("|",@ip)'`
@@ -83,7 +83,7 @@ for LOGDIR in $LOGDIR_LIST; do
 done
 
   cd "$LOGGING_DIR"
-  sudo tar -xzvf ../template/var.log.archivematica.tar.gz
+  sudo tar -xzvf $WORKING_DIR/template/var.log.archivematica.tar.gz
   sudo mv var.log.archivematica/* amatica
   sudo rmdir var.log.archivematica
   cd ..
