@@ -11,8 +11,6 @@ services:
     ports:
       - 80:80
       - 443:443
-      - 8000:8000
-      - 8443:8443
       - 8089:8089
     volumes:
       - run.php:/run/php
