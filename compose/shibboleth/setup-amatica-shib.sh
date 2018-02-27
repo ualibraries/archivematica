@@ -26,7 +26,7 @@ GIVENIP=$1
 HOSTIP=$1
 PERSISTANT_DIR=${2:-./persistant}
 LOGGING_DIR=${3:-./log}
-CONFIGURE_ONLY=$4
+RUN_MODE=$4
 
 if [ "$HOSTIP" = "" ]; then
   HOSTIP=`hostname -I 2>&1 | perl -ne '@ip = grep( !/^(192.168|10|172.[1-3]\d)./, split(/\s/)); print join("|",@ip)'`
@@ -94,8 +94,8 @@ done
 fi
 
 function docker_compose_up {
-  echo "CREATING docker containers in background"
-
+  echo "CREATING docker containers in background with environment variables:"
+  echo
   export NGINX_LOG_DIR=${NGINX_LOG_DIR:-"$LOGGING_DIR/nginx"}
   export SHIBBOLETH_LOG_DIR=${SHIBBOLETH_LOG_DIR:-"$LOGGING_DIR/shibboleth"}
   export SUPERVISOR_LOG_DIR=${SUPERVISOR_LOG_DIR:-"$LOGGING_DIR/supervisor"}
@@ -108,9 +108,11 @@ function docker_compose_up {
   export AMATICA_INC_DIR=${AMATICA_INC_DIR:-"$PERSISTANT_DIR/filesender"}
   export AMATICA_DAT_DIR=${AMATICA_DAT_DIR:-"$PERSISTANT_DIR/archivematica"}
   export MYSQL_DAT_DIR=${MYSQL_DAT_DIR:-"$PERSISTANT_DIR/mysql"}
-  #printenv
+
+  printenv | grep -e "AMATICA\|FILESENDER\|SMTP_\|MYSQL_\|DAT_DIR\|LOG_DIR"
+  echo
   
-  docker-compose --verbose up -d
+  docker-compose up -d
 }
 
 METADATA_URL="https://$HOSTIP/Shibboleth.sso/Metadata"
@@ -187,7 +189,7 @@ sed_file template/require_shib_session web/nginx/conf.d/require_shib_session
 echo "CONFIGURING docker-compose"
 sed_file template/docker-compose.yml docker-compose.yml
 
-if [ "$CONFIGURE_ONLY" = "" ]; then
+if [ "$RUN_MODE" != "config_only" ]; then
   docker_compose_up
   
   echo
