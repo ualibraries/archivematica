@@ -1,5 +1,5 @@
 #!/bin/bash
-#set -x
+set -x
 
 REQUIRED="hostname perl sed openssl docker-compose nc curl id /usr/sbin/addgroup /usr/sbin/adduser"
 
@@ -124,11 +124,11 @@ if [ -f "$METADATA_FILE" ]; then
   fi
 else
   
-if [ -f docker-compose.yml ]; then
-  echo "STOPPING any docker-compose created images"
-  docker-compose rm -fsv
-  echo "y" | docker volume prune
-fi
+  if [ -f docker-compose.yml ]; then
+    echo "STOPPING any docker-compose created images"
+    docker-compose rm -fsv
+    echo "y" | docker volume prune
+  fi
 
 DEVICE=$HOSTIP
 SUBJECT="/C=FC/postalCode=FakeZip/ST=FakeState/L=FakeCity/streetAddress=FakeStreet/O=FakeOrganization/OU=FakeDepartment/CN=${DEVICE}"
