@@ -1,5 +1,5 @@
 #!/bin/bash
-set -x
+#set -x
 
 REQUIRED="hostname perl sed openssl docker-compose nc curl id /usr/sbin/addgroup /usr/sbin/adduser"
 
@@ -117,9 +117,6 @@ function docker_compose_up {
 
 METADATA_URL="https://$HOSTIP/Shibboleth.sso/Metadata"
 METADATA_FILE="docker-filesender-phpfpm-shibboleth-$HOSTIP-metadata.xml"
-
-pwd
-ls
 
 if [ -f "$METADATA_FILE" ]; then
   if [ "`docker ps -a | grep archivematica`" = "" ]; then
