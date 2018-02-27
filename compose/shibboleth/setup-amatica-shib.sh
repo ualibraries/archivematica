@@ -19,7 +19,7 @@ while [ ! -d "$SETUP_DIR/../shibboleth/template" ]; do
     SETUP_DIR="$( cd $SETUP_DIR/.. && pwd )"
 done
 
-echo "WORKINGDIR: $SETUP_DIR"
+echo "SETUP_DIR: $SETUP_DIR"
 cd $SETUP_DIR
 
 GIVENIP=$1
@@ -90,7 +90,7 @@ done
   sudo tar -xzvf $SETUP_DIR/template/var.log.archivematica.tar.gz
   sudo mv var.log.archivematica/* amatica
   sudo rmdir var.log.archivematica
-  cd ..
+  cd -
 fi
 
 function docker_compose_up {
