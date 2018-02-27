@@ -26,6 +26,7 @@ GIVENIP=$1
 HOSTIP=$1
 PERSISTANT_DIR=${2:-./persistant}
 LOGGING_DIR=${3:-./log}
+CONFIGURE_ONLY=$4
 
 if [ "$HOSTIP" = "" ]; then
   HOSTIP=`hostname -I 2>&1 | perl -ne '@ip = grep( !/^(192.168|10|172.[1-3]\d)./, split(/\s/)); print join("|",@ip)'`
@@ -185,24 +186,28 @@ sed_file template/require_shib_session web/nginx/conf.d/require_shib_session
 echo "CONFIGURING docker-compose"
 sed_file template/docker-compose.yml docker-compose.yml
 
-docker_compose_up
-
-echo
-echo "WAITING for docker containers to be up"
-sleep 5
-
-RESULT=`nc -z -w1 ${HOSTIP} 443 && echo 1 || echo 0`
-
-while [ $RESULT -ne 1 ]; do
-  echo " **** Nginx ${HOSTIP}:443 is not responding, waiting... **** "
+if [ "$CONFIGURE_ONLY" = "" ]; then
+  docker_compose_up
+  
+  echo
+  echo "WAITING for docker containers to be up"
   sleep 5
+  
   RESULT=`nc -z -w1 ${HOSTIP} 443 && echo 1 || echo 0`
-done
-
-if [ ! -f "$METADATA_FILE" ]; then
-  echo "RETRIEVING $METADATA_URL"
-  sleep 2
-  curl -k $METADATA_URL > $METADATA_FILE
+  
+  while [ $RESULT -ne 1 ]; do
+    echo " **** Nginx ${HOSTIP}:443 is not responding, waiting... **** "
+    sleep 5
+    RESULT=`nc -z -w1 ${HOSTIP} 443 && echo 1 || echo 0`
+  done
+  
+  if [ ! -f "$METADATA_FILE" ]; then
+    echo "RETRIEVING $METADATA_URL"
+    sleep 2
+    curl -k $METADATA_URL > $METADATA_FILE
+  fi
+else
+  touch $METADATA_FILE
 fi
 
 fi
