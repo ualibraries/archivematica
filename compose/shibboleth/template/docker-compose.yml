@@ -21,7 +21,7 @@ services:
       - ./web/brand:/opt/brand
       - ./web/nginx/conf.d:/etc/nginx/conf.d
       - ./shib/shibboleth:/etc/shibboleth
-      - ${NGINX_LOG_DIR:-./log/web}:/var/log/nginx
+      - ${WEB_LOG_DIR:-./log/web}:/var/log/nginx
 
   fpm:
     image: 'uazlibraries/filesender-phpfpm:branch-StorageFilesystemPreserveName'
@@ -29,24 +29,24 @@ services:
     links:
       - db-host
     environment:
-      - SMTP_SERVER=smtp.gmail.com:587
-      - SMTP_TLS=true
-      - SMTP_USER=dockertestfilesender
-      - SMTP_PSWD=thisisalongpassword
-      - ADMIN_EMAIL=dockertestfilesender@gmail.com
-      - ADMIN_PSWD=password
-      - FILESENDER_URL=https://{PUBLICIP}/upload
-      - FILESENDER_LOGOUT_URL=https://{PUBLICIP}
-      - FILESENDER_STORAGE=FilesystemPreserveName
-      - FILESENDER_AUTHTYPE=shibboleth
-      - MAIL_ATTR=EPPN
-      - NAME_ATTR=EPPN
-      - UID_ATTR=EPPN
-      - CHOWN_WWW=333:333
-      - DB_HOST=db-host
-      - DB_NAME=filesender
-      - DB_USER=filesenderDBA
-      - DB_PASSWORD=filesenderPSWD
+      - SMTP_SERVER=${SMTP_SERVER:-smtp.gmail.com:587}
+      - SMTP_TLS=${SMTP_TLS:-true}
+      - SMTP_USER=${SMTP_USER:-dockertestfilesender}
+      - SMTP_PSWD=${SMTP_PSWD:-thisisalongpassword}
+      - ADMIN_EMAIL=${FILESENDER_ADMIN_EMAIL:-dockertestfilesender@gmail.com}
+      - ADMIN_PSWD=${FILESENDER_ADMIN_PSWD:-password}
+      - FILESENDER_URL=${FILESENDER_URL:-https://{PUBLICIP}/upload}
+      - FILESENDER_LOGOUT_URL=${FILESENDER_LOGOUT_URL:-https://{PUBLICIP}}
+      - FILESENDER_STORAGE=${FILESENDER_STORAGE:-FilesystemPreserveName}
+      - FILESENDER_AUTHTYPE=${FILESENDER_AUTHTYPE:-shibboleth}
+      - MAIL_ATTR=${FILESENDER_MAIL_ATTR:-EPPN}
+      - NAME_ATTR=${FILESENDER_NAME_ATTR:-EPPN}
+      - UID_ATTR=${FILESENDER_UID_ATTRI:-EPPN}
+      - CHOWN_WWW=${FILESENDER_CHOWN_WWW:-333:333}
+      - DB_HOST=${FILESENDER_DB_HOST:-db-host}
+      - DB_NAME=${FILESENDER_DB_NAME:-filesender}
+      - DB_USER=${FILESENDER_DB_USER:-filesenderDBA}
+      - DB_PASSWORD=${FILESENDER_DB_PASSWORD:-filesenderPSWD}
     volumes:
       - run.php:/run/php
       - ${FILESENDER_LOG_DIR:-./log/fpm}:/var/log/php-fpm
@@ -60,15 +60,15 @@ services:
     links:
       - db-host
     environment:
-      - SMTP_DOMAIN=gmail.com
-      - SMTP_SERVER=smtp.gmail.com:587
-      - SMTP_FROM=dockertestfilesender@gmail.com
-      - ADMIN_EMAIL=dockertestfilesender@gmail.com
-      - AMATICA_NOSERVICE=mysql,logfile
-      - DB_HOST=db-host
-      - DB_USER=amaticaDBA
-      - DB_PASSWORD=amaticaPSWD
-      - DB_DATABASE=MCP
+      - SMTP_DOMAIN=${SMTP_DOMAIN:-gmail.com}
+      - SMTP_SERVER=${SMTP_SERVER:-smtp.gmail.com:587}
+      - SMTP_FROM=${AMATICA_SMTP_FROM:-dockertestfilesender@gmail.com}
+      - ADMIN_EMAIL=${AMATICA_ADMIN_EMAIL:-amatica_admin@gmail.com}
+      - AMATICA_NOSERVICE=${AMATICA_NOSERVICE:-mysql,logfile}
+      - DB_HOST=${AMATICA_DB_HOST:-db-host}
+      - DB_USER=${AMATICA_DB_USER:-amaticaDBA}
+      - DB_PASSWORD=${AMATICA_DB_PASSWORD:-amaticaPSWD}
+      - DB_DATABASE=${AMATICA_DB_DATABASE:-MCP}
     volumes:
       - run.archivematica:/run/archivematica
       - ./amatica/overlay:/opt/archivematica
@@ -94,11 +94,11 @@ services:
     build: ./mysql
     restart: always
     environment:
-      - MYSQL_ROOT_PASSWORD=insecure
-      - MYSQL_DATABASE=MCP
-      - MYSQL_USER=amaticaDBA
-      - MYSQL_PASSWORD=amaticaPSWD
-      - MYSQL_ALLOW_EMPTY_PASSWORD='false'
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD:-insecure}
+      - MYSQL_ALLOW_EMPTY_PASSWORD=${MYSQL_ALLOW_EMPTY_PASSWORD:-'false'}
+      - MYSQL_DATABASE=${AMATICA_DB_DATABASE:-MCP}
+      - MYSQL_USER=${AMATICA_DB_USER:-amaticaDBA}
+      - MYSQL_PASSWORD=${AMATICA_DB_PASSWORD:-amaticaPSWD}
     volumes:
       - ${MYSQL_DAT_DIR:-./persistant/mysql}:/var/lib/mysql
 

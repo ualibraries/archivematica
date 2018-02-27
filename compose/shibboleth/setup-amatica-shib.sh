@@ -62,7 +62,10 @@ for USER in $USER_LIST; do
   let USER_ID=$((++USER_INC + 327))
 done
 
-# Ensure archivematica persistant dirs exist
+# Shibboleth does not have a persistance dir
+rmdir "$PERSISTANT_DIR/_shibd"
+
+# Ensure archivematica persistant dir exist
 AMATICA_LIST="filesender AIPstore"
 USER=archivematica
 
@@ -73,7 +76,7 @@ for AMATICA_DIR in $AMATICA_LIST; do
   fi
 done
 
-LOGDIR_LIST="shib amatica web fpm mysql supervisor"
+LOGDIR_LIST="shibboleth amatica nginx filesender mysql supervisor"
 
 if [ ! -d "$LOGGING_DIR/amatica/archivematica" ]; then
 for LOGDIR in $LOGDIR_LIST; do
@@ -89,11 +92,34 @@ done
   cd ..
 fi
 
+function docker_compose_up {
+  echo "CREATING docker containers in background"
+  
+  export NGINX_LOG_DIR=${NGINX_LOG_DIR:-"$LOGGING_DIR/nginx"}
+  export SHIBBOLETH_LOG_DIR=${SHIBBOLETH_LOG_DIR:-"$LOGGING_DIR/shibboleth"}
+  export SUPERVISOR_LOG_DIR=${SUPERVISOR_LOG_DIR:-"$LOGGING_DIR/supervisor"}
+  export AMATICA_LOG_DIR=${AMATICA_LOG_DIR:-"$LOGGING_DIR/amatica"}
+  export FILESENDER_LOG_DIR=${FILESENDER_LOG_DIR:-"$LOGGING_DIR/filesender"}
+  export FILESENDER_DAT_DIR=${FILESENDER_DAT_DIR:-"$PERSISTANT_DIR/filesender"}
+  export ELASTIC_DAT_DIR=${ELASTIC_DAT_DIR:-"$PERSISTANT_DIR/elasticsearch"}
+  export GEARMAN_DAT_DIR=${GEARMAN_DAT_DIR:-"$PERSISTANT_DIR/gearman"}
+  export CLAMAV_DAT_DIR=${CLAMAV_DAT_DIR:-"$PERSISTANT_DIR/clamav"}
+  export AMATICA_INC_DIR=${AMATICA_INC_DIR:-"$PERSISTANT_DIR/filesender"}
+  export AMATICA_DAT_DIR=${AMATICA_DAT_DIR:-"$PERSISTANT_DIR/archivematica"}
+  export MYSQL_DAT_DIR=${MYSQL_DAT_DIR:-"$PERSISTANT_DIR/mysql"}
+  
+  docker-compose up -d
+}
+
 METADATA_URL="https://$HOSTIP/Shibboleth.sso/Metadata"
 METADATA_FILE="docker-filesender-phpfpm-shibboleth-$HOSTIP-metadata.xml"
 
-if [ ! -f "$METADATA_FILE" ]; then
-
+if [ -f "$METADATA_FILE" ]; then
+  if [ "`docker ps -a | grep archivematica`" = "" ]; then
+    docker_compose_up
+  fi
+else
+  
 if [ -f docker-compose.yml ]; then
   echo "STOPPING any docker-compose created images"
   docker-compose rm -fsv
@@ -141,7 +167,9 @@ function sed_file {
   local DSTFILE="$2"
 
   cp -v "$SRCFILE" "$DSTFILE"
-  sed -i -e "s|{PUBLICIP}|$HOSTIP|g" "$DSTFILE"
+  sed -i \
+      -e "s|{PUBLICIP}|$HOSTIP|g" \
+      "$DSTFILE"
 }
 
 echo
@@ -157,22 +185,7 @@ sed_file template/require_shib_session web/nginx/conf.d/require_shib_session
 echo "CONFIGURING docker-compose"
 sed_file template/docker-compose.yml docker-compose.yml
 
-echo "CREATING docker containers in background"
-
-export NGINX_LOG_DIR=${NGINX_LOG_DIR:-"$LOGGING_DIR/web"}
-export SHIBBOLETH_LOG_DIR=${SHIBBOLETH_LOG_DIR:-"$LOGGING_DIR/shibboleth"}
-export SUPERVISOR_LOG_DIR=${SUPERVISOR_LOG_DIR:-"$LOGGING_DIR/supervisor"}
-export AMATICA_LOG_DIR=${AMATICA_LOG_DIR:-"$LOGGING_DIR/amatica"}
-export FILESENDER_LOG_DIR=${FILESENDER_LOG_DIR:-"$LOGGING_DIR/fpm"}
-export FILESENDER_DAT_DIR=${FILESENDER_DAT_DIR:-"$PERSISTANT_DIR/filesender"}
-export ELASTIC_DAT_DIR=${ELASTIC_DAT_DIR:-"$PERSISTANT_DIR/elasticsearch"}
-export GEARMAN_DAT_DIR=${GEARMAN_DAT_DIR:-"$PERSISTANT_DIR/gearman"}
-export CLAMAV_DAT_DIR=${CLAMAV_DAT_DIR:-"$PERSISTANT_DIR/clamav"}
-export AMATICA_INC_DIR=${AMATICA_INC_DIR:-"$PERSISTANT_DIR/filesender"}
-export AMATICA_DAT_DIR=${AMATICA_DAT_DIR:-"$PERSISTANT_DIR/archivematica"}
-export MYSQL_DAT_DIR=${MYSQL_DAT_DIR:-"$PERSISTANT_DIR/mysql"}
-
-docker-compose up -d
+docker_compose_up
 
 echo
 echo "WAITING for docker containers to be up"
