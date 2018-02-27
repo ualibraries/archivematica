@@ -21,7 +21,7 @@ services:
       - ./web/brand:/opt/brand
       - ./web/nginx/conf.d:/etc/nginx/conf.d
       - ./shib/shibboleth:/etc/shibboleth
-      - ${WEB_LOG_DIR:-./log/web}:/var/log/nginx
+      - ${NGINX_LOG_DIR:-./log/nginx}:/var/log/nginx
 
   fpm:
     image: 'uazlibraries/filesender-phpfpm:branch-StorageFilesystemPreserveName'
