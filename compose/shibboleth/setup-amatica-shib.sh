@@ -95,7 +95,7 @@ fi
 
 function docker_compose_up {
   echo "CREATING docker containers in background"
-  
+
   export NGINX_LOG_DIR=${NGINX_LOG_DIR:-"$LOGGING_DIR/nginx"}
   export SHIBBOLETH_LOG_DIR=${SHIBBOLETH_LOG_DIR:-"$LOGGING_DIR/shibboleth"}
   export SUPERVISOR_LOG_DIR=${SUPERVISOR_LOG_DIR:-"$LOGGING_DIR/supervisor"}
@@ -108,6 +108,7 @@ function docker_compose_up {
   export AMATICA_INC_DIR=${AMATICA_INC_DIR:-"$PERSISTANT_DIR/filesender"}
   export AMATICA_DAT_DIR=${AMATICA_DAT_DIR:-"$PERSISTANT_DIR/archivematica"}
   export MYSQL_DAT_DIR=${MYSQL_DAT_DIR:-"$PERSISTANT_DIR/mysql"}
+  printenv
   
   docker-compose up -d
 }
