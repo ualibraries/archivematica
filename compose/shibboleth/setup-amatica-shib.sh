@@ -108,9 +108,9 @@ function docker_compose_up {
   export AMATICA_INC_DIR=${AMATICA_INC_DIR:-"$PERSISTANT_DIR/filesender"}
   export AMATICA_DAT_DIR=${AMATICA_DAT_DIR:-"$PERSISTANT_DIR/archivematica"}
   export MYSQL_DAT_DIR=${MYSQL_DAT_DIR:-"$PERSISTANT_DIR/mysql"}
-  printenv
+  #printenv
   
-  docker-compose up -d
+  docker-compose --verbose up -d
 }
 
 METADATA_URL="https://$HOSTIP/Shibboleth.sso/Metadata"
