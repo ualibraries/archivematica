@@ -19,8 +19,8 @@ services:
       - filesender:/opt/filesender
       - simplesaml:/opt/simplesamlphp
       - ./web/brand:/opt/brand
-      - ./web/nginx/conf.d:/etc/nginx/conf.d
-      - ./shib/shibboleth:/etc/shibboleth
+      - ${NGINX_ETC_DIR:-./web/nginx/conf.d}:/etc/nginx/conf.d
+      - ${SHIBBOLETH_ETC_DIR:-./shib/shibboleth}:/etc/shibboleth
       - ${NGINX_LOG_DIR:-./log/nginx}:/var/log/nginx
 
   fpm:
@@ -84,7 +84,7 @@ services:
     restart: always
     volumes:
       - run.shibboleth:/run/shibboleth
-      - ./shib/shibboleth:/etc/shibboleth
+      - ${SHIBBOLETH_ETC_DIR:-./shib/shibboleth}:/etc/shibboleth
       - ./shib/supervisor/conf.d:/etc/supervisor/conf.d
       - ./shib/dip-display:/opt/dip-display
       - ${SHIBBOLETH_LOG_DIR:-./log/shibboleth}:/var/log/shibboleth
@@ -108,7 +108,3 @@ volumes:
   run.archivematica:
   filesender:
   simplesaml:
-
-
-#      - ${AMATICA_DST_DIR:-/persistant/AIPstore}:/var/archivematica/www
-#      - ${AMATICA_DST_DIR:-./persistant/AIPstore}:/var/archivematica/www
