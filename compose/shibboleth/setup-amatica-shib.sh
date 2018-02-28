@@ -106,7 +106,7 @@ function docker_compose_up {
   export AMATICA_DAT_DIR=${AMATICA_DAT_DIR:-"$PERSISTANT_DIR/archivematica"}
   export MYSQL_DAT_DIR=${MYSQL_DAT_DIR:-"$PERSISTANT_DIR/mysql"}
 
-  printenv | grep -e "AMATICA\|FILESENDER\|SMTP_\|MYSQL_\|DAT_DIR\|LOG_DIR" | sort > "$SETUP_DIR/.env"
+  printenv | grep -e "AMATICA\|FILESENDER\|SMTP_\|MYSQL_\|DAT_DIR\|LOG_DIR|ETC_DIR" | sort > "$SETUP_DIR/.env"
   
   docker-compose config
   echo
