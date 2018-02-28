@@ -63,9 +63,6 @@ for USER in $USER_LIST; do
   let USER_ID=$((++USER_INC + 327))
 done
 
-# Shibboleth does not have a persistance dir
-rmdir "$PERSISTANT_DIR/_shibd"
-
 # Ensure archivematica persistant dir exist
 AMATICA_LIST="filesender AIPstore"
 USER=archivematica
@@ -109,9 +106,10 @@ function docker_compose_up {
   export AMATICA_DAT_DIR=${AMATICA_DAT_DIR:-"$PERSISTANT_DIR/archivematica"}
   export MYSQL_DAT_DIR=${MYSQL_DAT_DIR:-"$PERSISTANT_DIR/mysql"}
 
-  printenv | grep -e "AMATICA\|FILESENDER\|SMTP_\|MYSQL_\|DAT_DIR\|LOG_DIR" | sort
-  echo
+  printenv | grep -e "AMATICA\|FILESENDER\|SMTP_\|MYSQL_\|DAT_DIR\|LOG_DIR" | sort > "$SETUP_DIR/.env"
   
+  docker-compose config
+  echo
   docker-compose up -d
 }
 
