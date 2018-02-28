@@ -91,7 +91,7 @@ done
 fi
 
 function docker_compose_up {
-  echo "CREATING docker containers in background with environment variables:"
+  echo "CREATING docker containers in background with configuration saved in $SETUP_DIR/.env"
   echo
   export NGINX_LOG_DIR=${NGINX_LOG_DIR:-"$LOGGING_DIR/nginx"}
   export SHIBBOLETH_LOG_DIR=${SHIBBOLETH_LOG_DIR:-"$LOGGING_DIR/shibboleth"}
