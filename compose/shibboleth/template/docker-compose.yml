@@ -89,6 +89,7 @@ services:
       - ${SUPERVISOR_DAT_DIR:-./shib/dip-display}:/opt/dip-display
       - ${SHIBBOLETH_LOG_DIR:-./log/shibboleth}:/var/log/shibboleth
       - ${SUPERVISOR_LOG_DIR:-./log/supervisor}:/var/log/supervisor
+      - ${AMATICA_DAT_DIR:-./persistant/archivematica}:/var/archivematica
 
   db-host:
     build: ./mysql
