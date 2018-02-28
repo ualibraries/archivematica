@@ -18,7 +18,7 @@ services:
       - run.archivematica:/run/archivematica
       - filesender:/opt/filesender
       - simplesaml:/opt/simplesamlphp
-      - ./web/brand:/opt/brand
+      - ${NGINX_ICON_DIR:-./web/icon}:/opt/brand
       - ${NGINX_ETC_DIR:-./web/nginx/conf.d}:/etc/nginx/conf.d
       - ${SHIBBOLETH_ETC_DIR:-./shib/shibboleth}:/etc/shibboleth
       - ${NGINX_LOG_DIR:-./log/nginx}:/var/log/nginx
@@ -85,8 +85,8 @@ services:
     volumes:
       - run.shibboleth:/run/shibboleth
       - ${SHIBBOLETH_ETC_DIR:-./shib/shibboleth}:/etc/shibboleth
-      - ./shib/supervisor/conf.d:/etc/supervisor/conf.d
-      - ./shib/dip-display:/opt/dip-display
+      - ${SUPERVISOR_ETC_DIR:-./shib/supervisor/conf.d}:/etc/supervisor/conf.d
+      - ${SUPERVISOR_DAT_DIR:-./shib/dip-display}:/opt/dip-display
       - ${SHIBBOLETH_LOG_DIR:-./log/shibboleth}:/var/log/shibboleth
       - ${SUPERVISOR_LOG_DIR:-./log/supervisor}:/var/log/supervisor
 
