@@ -5,7 +5,7 @@
 # To debug:
 # 1. iptables -F DOCKER-USER; emacs iptables.docker-firewall.rules
 # 2. cp iptables.docker-firewall.rules /etc ; iptables-restore -n /etc/iptables.docker-firewall.rules; iptables -L
-    
+
 :DOCKER-USER - [0:0]
 
 -A DOCKER-USER -i ens160 -p tcp -s shibboleth.abcde.edu -j ACCEPT
