@@ -1,0 +1,13 @@
+[Unit]
+Description=Docker firewall rules
+After=docker.service
+
+[Service]
+Type=simple
+User=root
+Group=root
+ExecStart=/sbin/iptables-restore -n /etc/iptables.docker-firewall.rules
+RemainAfterExit=true
+
+[Install]
+WantedBy=multi-user.target
