@@ -10,6 +10,7 @@
 
 -A DOCKER-USER -i ens160 -p tcp -s shibboleth.abcde.edu -j ACCEPT
 -A DOCKER-USER -i ens160 -p tcp -s smtp.abcde.edu -j ACCEPT
+
 -A DOCKER-USER -i ens160 -p tcp -s 192.168.118.0/23 --dport 443 -j ACCEPT
 -A DOCKER-USER -i ens160 -p tcp -s 192.168.238.0/23 --dport 443 -j ACCEPT
 -A DOCKER-USER -i ens160 -p tcp -s 192.168.113.192/255.255.255.240 --dport 443 -j ACCEPT
@@ -18,9 +19,6 @@
 -A DOCKER-USER -i ens160 -p tcp -s 192.168.238.0/23 --dport 80 -j ACCEPT
 -A DOCKER-USER -i ens160 -p tcp -s 192.168.113.192/255.255.255.240 --dport 80 -j ACCEPT
 
--A DOCKER-USER -i ens160 -p tcp -s 192.168.118.0/23 --dport 8089 -j ACCEPT
--A DOCKER-USER -i ens160 -p tcp -s 192.168.238.0/23 --dport 8089 -j ACCEPT
--A DOCKER-USER -i ens160 -p tcp -s 192.168.113.192/255.255.255.240 --dport 8089 -j ACCEPT
 -A DOCKER-USER -i ens160 -p tcp -j DROP
 
 -A DOCKER-USER -j RETURN
