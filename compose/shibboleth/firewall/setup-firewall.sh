@@ -1,9 +1,10 @@
-#!/bin/sh
-set -x
+#!/bin/bash
+#set -x
 
 RUN_MODE="${1:-HOST|DOCKER}"
 HOST_RULES=iptables.firewall.rules
 DOCKER_RULES=iptables.docker-firewall.rules
+SHOW_IPTABLES=
 FIREWALL_DIR=.
 
 function sed_file {
@@ -12,20 +13,20 @@ function sed_file {
 
   cp -v "$SRCFILE" "$DSTFILE"
 
-  if [ -n "$FIREWALL_SUBNET_1" ]; then
-    sed -i -e "|192.168.118.0/23|d" "$DSTFILE"
+  if [ -z "$FIREWALL_SUBNET_1" ]; then
+    sed -i -e "/192.168.118.0.23/d" "$DSTFILE"
   fi
-  if [ -n "$FIREWALL_SUBNET_2" ]; then
-    sed -i -e "|192.168.238.0/23|d" "$DSTFILE"
+  if [ -z "$FIREWALL_SUBNET_2" ]; then
+    sed -i -e "/192.168.238.0.23/d" "$DSTFILE"
   fi
-  if [ -n "$FIREWALL_SUBNET_3" ]; then
-    sed -i -e "|192.168.113.192/255.255.255.240|d" "$DSTFILE"
+  if [ -z "$FIREWALL_SUBNET_3" ]; then
+    sed -i -e "/192.168.113.192.255.255.255.240/d" "$DSTFILE"
   fi
-  if [ -n "$FIREWALL_SUBNET_4" ]; then
-    sed -i -e "|192.168.135.64/26|d" "$DSTFILE"
+  if [ -z "$FIREWALL_SUBNET_4" ]; then
+    sed -i -e "/192.168.135.64.26/d" "$DSTFILE"
   fi
-  if [ -n "$FIREWALL_SUBNET_5" ]; then
-    sed -i -e "|192.168.155.0/24|d" "$DSTFILE"
+  if [ -z "$FIREWALL_SUBNET_5" ]; then
+    sed -i -e "/192.168.155.0.24/d" "$DSTFILE"
   fi
   
   sed -i \
@@ -47,15 +48,17 @@ if [ "`echo $RUN_MODE | grep -i SED`" != "" ]; then
 fi
 
 if [ "`echo $RUN_MODE | grep -i HOST`" != "" ]; then
-  if [ -f "$HOST_RULES" ]; then
+  if [ -f "$FIREWALL_DIR/$HOST_RULES" ]; then
     echo "FIREWALL: protecting host system"
-    cp -v $FIREWALL_DIR/iptables.firewall.* /etc/
-    cp -v $FIREWALL_DIR/firewall /etc/network/if-pre-up.d/firewall
+    cp -v "$FIREWALL_DIR/$HOST_RULES" /etc/
+    cp -v "$FIREWALL_DIR/iptables.firewall.reset.open" /etc/
+    cp -v "$FIREWALL_DIR/firewall" /etc/network/if-pre-up.d/firewall
     /etc/network/if-pre-up.d/firewall
   
     if [ -f "/etc/init.d/docker" ]; then
       /etc/init.d/docker restart
     fi
+    SHOW_IPTABLES=true
   else
     echo "FIREWALL: missing $HOST_RULES file. Run ./setup-firewall.sh SED"
   fi
@@ -64,11 +67,12 @@ fi
 if [ "`echo $RUN_MODE | grep -i DOCKER`" != "" ]; then
   if [ -f "$DOCKER_RULES" ]; then
     echo "FIREWALL: protecting docker"
-    cp -v $FIREWALL_DIR/docker-firewall.service /lib/systemd/system
-    cp -v $FIREWALL_DIR/iptables.docker-firewall.* /etc/
+    cp -v "$FIREWALL_DIR/docker-firewall.service" /lib/systemd/system
+    cp -v "$FIREWALL_DIR/$DOCKER_RULES" /etc/
     systemctl enable docker-firewall
     systemctl daemon-reload
     systemctl start docker-firewall
+    SHOW_IPTABLES=true
   else
     echo "FIREWALL: missing $DOCKER_RULES file. Run ./setup-firewall.sh SED"
   fi
@@ -88,7 +92,7 @@ if [ "`echo $RUN_MODE | grep -i CLEAN`" != "" ]; then
   rm -v /etc/iptables.docker-firewall.*
 fi
 
-if [ "`echo $RUN_MODE | grep -i DOCKER\\|HOST`" != "" ]; then
+if [ "$SHOW_IPTABLES" = "true" ]; then
   iptables -L
 fi
 
