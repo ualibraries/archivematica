@@ -1,4 +1,5 @@
 #!/bin/sh
+set -x
 
 RUN_MODE="${1:-HOST|DOCKER}"
 HOST_RULES=iptables.firewall.rules
@@ -46,23 +47,31 @@ if [ "`echo $RUN_MODE | grep -i SED`" != "" ]; then
 fi
 
 if [ "`echo $RUN_MODE | grep -i HOST`" != "" ]; then
-  echo "FIREWALL: protecting host system"
-  cp -v $FIREWALL_DIR/iptables.firewall.* /etc/
-  cp -v $FIREWALL_DIR/firewall /etc/network/if-pre-up.d/firewall
-  /etc/network/if-pre-up.d/firewall
-
-  if [ -f "/etc/init.d/docker" ]; then
-    /etc/init.d/docker restart
+  if [ -f "$HOST_RULES" ]; then
+    echo "FIREWALL: protecting host system"
+    cp -v $FIREWALL_DIR/iptables.firewall.* /etc/
+    cp -v $FIREWALL_DIR/firewall /etc/network/if-pre-up.d/firewall
+    /etc/network/if-pre-up.d/firewall
+  
+    if [ -f "/etc/init.d/docker" ]; then
+      /etc/init.d/docker restart
+    fi
+  else
+    echo "FIREWALL: missing $HOST_RULES file. Run ./setup-firewall.sh SED"
   fi
 fi
 
 if [ "`echo $RUN_MODE | grep -i DOCKER`" != "" ]; then
-  echo "FIREWALL: protecting docker"
-  cp -v $FIREWALL_DIR/docker-firewall.service /lib/systemd/system
-  cp -v $FIREWALL_DIR/iptables.docker-firewall.* /etc/
-  systemctl enable docker-firewall
-  systemctl daemon-reload
-  systemctl start docker-firewall
+  if [ -f "$DOCKER_RULES" ]; then
+    echo "FIREWALL: protecting docker"
+    cp -v $FIREWALL_DIR/docker-firewall.service /lib/systemd/system
+    cp -v $FIREWALL_DIR/iptables.docker-firewall.* /etc/
+    systemctl enable docker-firewall
+    systemctl daemon-reload
+    systemctl start docker-firewall
+  else
+    echo "FIREWALL: missing $DOCKER_RULES file. Run ./setup-firewall.sh SED"
+  fi
 fi
 
 if [ "`echo $RUN_MODE | grep -i CLEAN`" != "" ]; then
