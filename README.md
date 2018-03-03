@@ -1,9 +1,27 @@
-# archivematica-docker
+rchivematica-docker
+
+- [Introduction](#introduction)
+- [Packaging Strategy](#packaging)
+- [Dependencies](#dependencies)
+- [Environment Variables](#environment-variables)
+- [Logging](#logging)
+- [Deployment use cases](#deployment-use-cases)
+- [Logs](#logs)
+- [Scaling](#scaling)
+- [Ports](#ports)
+- [Tests](#tests)
+- [Cleaning up](#cleaning-up)
+- [Troubleshooting](#troubleshooting)
+- [Nginx returns 502 Bad Gateway](#nginx-returns-502-bad-gateway)
+- [MCPClient osdeps cannot be updated](#mcpclient-osdeps-cannot-be-updated)
+
+## Introduction
+
 Archivematica in a self-contained docker image
 
 This docker image was built from archivematica's installation [instructions](https://www.archivematica.org/en/docs/archivematica-1.6/admin-manual/installation/installation/)
 
-## Packaging strategies
+## Packaging
 
 Archivematica is a complex piece of software, and to create an all-in-one self-contained container the following packaging strategies were used:
 
@@ -24,6 +42,51 @@ The second stage, happening the first time an archivematica docker container ins
 1. Change uid:gid values of system users per CHOWN_<USER>=uid:gid environment variables. [ /usr/share/archivematica/docker/chown-archivematica.sh ].
 2. Installation of mysql, elasticsearch, archivematica-storage, archivematica-server, archivematica-client, archivematica-dashboard [ /usr/share/archivematica/docker/setup-archivematica.sh ].
 3. Email the sysadmin when the second stage is complete, with a log of second stage [ /usr/share/archivematica/docker/setup-log-archivematica.sh ].
+
+## Dependencies
+This docker image of filesender requires the following environment dependencies:
+
+### Host system dependencies
+1. [docker-compose](https://docs.docker.com/compose/overview/) is installed on the system.
+2. The host system's time synchronized with a master [ntp](https://en.wikipedia.org/wiki/Network_Time_Protocol) server.
+3. No other service on the system is listening at port 80 or 443. This can be changed through modifying the docker-compose configuration and files.
+4. A public IP address if using shibboleth authentication. For production deployments, having nginx using an ssl cert associated with a public DNS entry is the ideal situation.
+5. For production deployments, planned disk capacity for both uploaded files and the storage capacity for processed AIPs and DIPs.
+
+### External dependencies
+
+1. An [smtp](https://en.wikipedia.org/wiki/Simple_Mail_Transfer_Protocol) server to send emails. For the examples located in the [compose/](https://github.com/ualibraries/filesender-phpfpm/tree/2.0-beta2/compose) directory, they use a gmail test account. For a production deployment an organization's smtp server should be used.
+
+## Environment Variables
+
+The following environment variables control the docker setup:
+
+* FILESENDER_URL - full URL to enter in the browser to bring up filesender
+* FILESENDER_AUTHTYPE - used by the 2.x series with the possible values:
+  * shibboleth - use shibboleth for authentication
+  * saml - use simplesamlphp for authentication
+  * fake - use a fake user to authenticate.
+* FILESENDER_AUTHSAML - when using simplesaml for authentication, which is the only option with the 1.x series, the authentication type to use as defined in simplesamlphps's [config/authsources.php](https://github.com/ualibraries/filesender-phpfpm/tree/1.6/compose/simplesaml/simplesamlphp/config) file.
+* MAIL_ATTR, NAME_ATTR, UID_ATTR - depending on the value of FILESENDER_AUTHTYPE:
+  * shibboleth - the fastcgi environment variable containing the attribute value.
+  * simplesamlphp - the saml attribute name to use.
+  * fake - the actual value to use
+* DB_HOST - the database hostname to connect to.
+* DB_NAME - the database namespace to install filesender tables into
+* DB_USER - the database user to connecto the database system with
+* DB_PASSWORD - the database user password
+* SMTP_SERVER - the SMTP server to send email through. It must be a valid server for filesender to work.
+* SMTP_TLS - The SMTP server requires TLS encrypted communication
+* SMTP_USER - the optional user account needed to connect to the SMTP server
+* SMTP_PSWD - the optional SMTP user account password
+* CHOWN_WWW - An optional uid:gid value for filesender to run as. It is most relevent when docker mounting the container's /data directory to store uploads on the host filesystem. Filesender should be running as the user owning the host system directory, otherwise upload permission errors will occur.
+* ADMIN_EMAIL - email address of the filesender admin account, must be valid
+* ADMIN_USERS - the set of user accounts that should be considered administrators
+* ADMIN_PSWD - the password to use for the admin account 
+* SIMPLESAML_MODULES - the space seperated list of simplesaml [module directories](https://github.com/simplesamlphp/simplesamlphp/tree/master/modules) to enable for authentication and filtering. Usually enabling one of these modules requires setting configuration settings for it in the [authsources.php](https://github.com/ualibraries/filesender-phpfpm/tree/1.6/compose/simplesaml/simplesamlphp/config) file.
+* SIMPLESAML_SALT - an optional simplesaml salt value to use. A value will get auto-generated on first time startup if missing.
+
+These variables are set using the [setup.sh](https://github.com/ualibraries/filesender-phpfpm/blob/2.0-beta2/docker/setup.sh) script, which runs in the filesender-phpfpm docker container the first time it starts up from the location /setup.sh.
 
 ### Logging
 
@@ -46,7 +109,6 @@ This release is still considered beta because only the following deployment use 
 3. [External mysql](#external_mysql)
 4. [External nginx](#external_nginx)
 5. [Filesender integration](#filesender)
-
 
 ## Test Instance
 
