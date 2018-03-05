@@ -20,6 +20,9 @@ export DEBIAN_FRONTEND=noninteractive DEBCONF_NONINTERACTIVE_SEEN=true
 ./debconf-set-selections-archivematica-mcp-server.sh
 ./debconf-set-selections-postfix.sh
 
+# Refresh the apt archive database
+apt-get update -y
+
 # Setup archivematica with second phase post-installation
 apt-get install -y mysql-server
 

@@ -25,4 +25,4 @@ COPY docker/setup-log-archivematica.sh /usr/share/archivematica/docker
 EXPOSE 80 443 8000 8001 8002
 
 # Auto-start
-CMD /entrypoint-archivematica.sh start FOREGROUND
+CMD /entrypoint-archivematica.sh restart FOREGROUND
