@@ -4,8 +4,8 @@
 ACTION=${1:-restart}
 SMTP_DOMAIN=${SMTP_DOMAIN:-abcd.edu}
 SMTP_FROM=${SMTP_FROM:-archivematica@$SMTP_DOMAIN}
-SMTP_ADMIN=${SMTP_ADMIN:-admin@$SMTP_DOMAIN}
-export SENDMAIL_ENDPOINTS="-F 'Archivematica' -f $SMTP_FROM $SMTP_ADMIN"
+ADMIN_EMAIL=${ADMIN_EMAIL:-admin@$SMTP_DOMAIN}
+export SENDMAIL_ENDPOINTS="-F 'Archivematica' -f $SMTP_FROM $ADMIN_EMAIL"
 
 service_check () {
   SERVICE_GREP=${2:-$1}

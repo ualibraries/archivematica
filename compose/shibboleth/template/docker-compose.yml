@@ -1,0 +1,111 @@
+version: '3'
+services:
+  web:
+    build: ./web
+    restart: always
+    tty: true
+    links:
+      - fpm
+      - amatica
+      - shib
+    ports:
+      - 80:80
+      - 443:443
+      - 8089:8089
+    volumes:
+      - run.php:/run/php
+      - run.shibboleth:/run/shibboleth
+      - run.archivematica:/run/archivematica
+      - filesender:/opt/filesender
+      - simplesaml:/opt/simplesamlphp
+      - ${NGINX_ICON_DIR:-./web/icon}:/opt/brand
+      - ${NGINX_ETC_DIR:-./web/nginx/conf.d}:/etc/nginx/conf.d
+      - ${SHIBBOLETH_ETC_DIR:-./shib/shibboleth}:/etc/shibboleth
+      - ${NGINX_LOG_DIR:-./log/nginx}:/var/log/nginx
+
+  fpm:
+    image: 'uazlibraries/filesender-phpfpm:branch-StorageFilesystemPreserveName'
+    restart: always
+    links:
+      - db-host
+    environment:
+      - SMTP_SERVER=${SMTP_SERVER:-smtp.gmail.com:587}
+      - SMTP_TLS=${SMTP_TLS:-true}
+      - SMTP_USER=${SMTP_USER:-dockertestfilesender}
+      - SMTP_PSWD=${SMTP_PSWD:-thisisalongpassword}
+      - ADMIN_EMAIL=${FILESENDER_ADMIN_EMAIL:-dockertestfilesender@gmail.com}
+      - ADMIN_PSWD=${FILESENDER_ADMIN_PSWD:-password}
+      - FILESENDER_URL=${FILESENDER_URL:-https://{PUBLICIP}/upload}
+      - FILESENDER_LOGOUT_URL=${FILESENDER_LOGOUT_URL:-https://{PUBLICIP}}
+      - FILESENDER_STORAGE=${FILESENDER_STORAGE:-FilesystemPreserveName}
+      - FILESENDER_AUTHTYPE=${FILESENDER_AUTHTYPE:-shibboleth}
+      - MAIL_ATTR=${FILESENDER_MAIL_ATTR:-EPPN}
+      - NAME_ATTR=${FILESENDER_NAME_ATTR:-EPPN}
+      - UID_ATTR=${FILESENDER_UID_ATTR:-EPPN}
+      - CHOWN_WWW=${FILESENDER_CHOWN_WWW:-333:333}
+      - DB_HOST=${FILESENDER_DB_HOST:-db-host}
+      - DB_NAME=${FILESENDER_DB_NAME:-filesender}
+      - DB_USER=${FILESENDER_DB_USER:-filesenderDBA}
+      - DB_PASSWORD=${FILESENDER_DB_PASSWORD:-filesenderPSWD}
+    volumes:
+      - run.php:/run/php
+      - ${FILESENDER_LOG_DIR:-./log/fpm}:/var/log/php-fpm
+      - ${FILESENDER_DAT_DIR:-./persistant/filesender}:/data
+      - filesender:/opt/filesender
+      - simplesaml:/opt/simplesamlphp
+
+  amatica:
+    image: 'uazlibraries/archivematica:1.6.1-beta3'
+    restart: always
+    links:
+      - db-host
+    environment:
+      - SMTP_DOMAIN=${SMTP_DOMAIN:-gmail.com}
+      - SMTP_SERVER=${SMTP_SERVER:-smtp.gmail.com:587}
+      - SMTP_FROM=${AMATICA_SMTP_FROM:-dockertestfilesender@gmail.com}
+      - ADMIN_EMAIL=${AMATICA_ADMIN_EMAIL:-amatica_admin@gmail.com}
+      - AMATICA_NOSERVICE=${AMATICA_NOSERVICE:-mysql,logfile}
+      - DB_HOST=${AMATICA_DB_HOST:-db-host}
+      - DB_USER=${AMATICA_DB_USER:-amaticaDBA}
+      - DB_PASSWORD=${AMATICA_DB_PASSWORD:-amaticaPSWD}
+      - DB_DATABASE=${AMATICA_DB_DATABASE:-MCP}
+    volumes:
+      - run.archivematica:/run/archivematica
+      - ./amatica/overlay:/opt/archivematica
+      - ${AMATICA_LOG_DIR:-./log/amatica}:/var/log
+      - ${ELASTIC_DAT_DIR:-./persistant/elasticsearch}:/var/lib/elasticsearch
+      - ${GEARMAN_DAT_DIR:-./persistant/gearman}:/var/lib/gearman
+      - ${CLAMAV_DAT_DIR:-./persistant/clamav}:/var/lib/clamav
+      - ${AMATICA_INC_DIR:-./persistant/filesender}:/home
+      - ${AMATICA_DAT_DIR:-./persistant/archivematica}:/var/archivematica
+
+  shib:
+    build: ./shib
+    restart: always
+    volumes:
+      - run.shibboleth:/run/shibboleth
+      - ${SHIBBOLETH_ETC_DIR:-./shib/shibboleth}:/etc/shibboleth
+      - ${SUPERVISOR_ETC_DIR:-./shib/supervisor/conf.d}:/etc/supervisor/conf.d
+      - ${SUPERVISOR_DAT_DIR:-./shib/dip-display}:/opt/dip-display
+      - ${SHIBBOLETH_LOG_DIR:-./log/shibboleth}:/var/log/shibboleth
+      - ${SUPERVISOR_LOG_DIR:-./log/supervisor}:/var/log/supervisor
+      - ${AMATICA_DAT_DIR:-./persistant/archivematica}:/var/archivematica
+
+  db-host:
+    build: ./mysql
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD:-insecure}
+      - MYSQL_ALLOW_EMPTY_PASSWORD=${MYSQL_ALLOW_EMPTY_PASSWORD:-'false'}
+      - MYSQL_DATABASE=${AMATICA_DB_DATABASE:-MCP}
+      - MYSQL_USER=${AMATICA_DB_USER:-amaticaDBA}
+      - MYSQL_PASSWORD=${AMATICA_DB_PASSWORD:-amaticaPSWD}
+    volumes:
+      - ${MYSQL_DAT_DIR:-./persistant/mysql}:/var/lib/mysql
+
+volumes:
+  run.php:
+  run.shibboleth:
+  run.archivematica:
+  filesender:
+  simplesaml:

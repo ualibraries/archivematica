@@ -3,8 +3,8 @@
 # Change uid:gid permissions per CHOWN_xxxx environment variables
 ./chown-archivematica.sh
 
-if [ "$SMTP_HOST" != "" ]; then
-  sed -i "s/smtp.abcd.edu/$SMTP_HOST/g" ./debconf-set-selections-postfix.sh
+if [ "$SMTP_SERVER" != "" ]; then
+  sed -i "s/smtp.abcd.edu/$SMTP_SERVER/g" ./debconf-set-selections-postfix.sh
   sed -i "s/email.abcd.edu/$SMTP_DOMAIN/g" ./debconf-set-selections-postfix.sh
 fi
 
@@ -19,6 +19,9 @@ export DEBIAN_FRONTEND=noninteractive DEBCONF_NONINTERACTIVE_SEEN=true
 # when archivematica packages are installed
 ./debconf-set-selections-archivematica-mcp-server.sh
 ./debconf-set-selections-postfix.sh
+
+# Refresh the apt archive database
+apt-get update -y
 
 # Setup archivematica with second phase post-installation
 apt-get install -y mysql-server
@@ -113,3 +116,14 @@ fi
 
 service elasticsearch stop
 service mysql stop
+
+# Overlay custom files, if they exist
+OVERLAY_DIR=${AMATICA_OVERLAY_DIR:-"/opt/archivematica"}
+
+if [ -d "$OVERLAY_DIR" ]; then
+  echo "OVERLAY: $OVERLAY_DIR"
+  cd $OVERLAY_DIR
+  cp -vR * /
+  cd -
+fi
+

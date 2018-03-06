@@ -92,8 +92,6 @@ archivematica-mcp-client
 # Create directories used to export volumes
 RUN echo 'debconf debconf/frontend select Teletype' | \
 debconf-set-selections && \
-mkdir -p /usr/share/archivematica/dashboard && \
-mkdir -p /usr/share/python/archivematica-storage-service && \
 mkdir -p /etc/archivematica/archivematicaCommon && \
 mkdir /var/log/archivematica && \
 chown -vR archivematica.archivematica /var/log/archivematica && \
@@ -109,14 +107,14 @@ ADD docker/ /usr/share/archivematica/docker/
 RUN \
 mv /usr/share/archivematica/docker/init.d/archivematica-* /etc/init.d/ && \
 mv /usr/share/archivematica/docker/dbconfig-common/* /etc/dbconfig-common/ && \
-mv /usr/share/archivematica/docker/service-archivematica.sh /entrypoint-archivematica.sh && \
+mv /usr/share/archivematica/docker/entrypoint-archivematica.sh /entrypoint-archivematica.sh && \
 mv -v   /usr/share/archivematica/docker/var.lib.clamav/* /var/lib/clamav && \
 chown -vR clamav.clamav     /var/lib/clamav && \
 rm -vfr /usr/share/archivematica/docker/var.lib.clamav
 
-VOLUME [ "/var/lib/elasticsearch", "/var/lib/gearman", "/var/lib/clamav", "/var/lib/mysql", "/var/archivematica", "/var/log", "/usr/share/archivematica/dashboard", "/usr/share/python/archivematica-storage-service", "/run/archivematica" ]
+#VOLUME [ "/var/lib/elasticsearch", "/var/lib/gearman", "/var/lib/clamav", "/var/lib/mysql", "/var/archivematica", "/var/log", "/usr/share/archivematica/dashboard", "/usr/share/python/archivematica-storage-service", "/run/archivematica" ]
 
 EXPOSE 80 443 8000 8001 8002
 
 # Auto-start
-CMD /entrypoint-archivematica.sh start FOREGROUND
+CMD /entrypoint-archivematica.sh restart FOREGROUND

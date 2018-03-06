@@ -20,7 +20,7 @@ services:
       - dashboard:/opt/dashboard
 
   fpm:
-    image: 'uazlibraries/filesender-phpfpm:2.0-beta3'
+    image: 'uazlibraries/filesender-phpfpm:branch-StorageFilesystemPreserveName'
     restart: always
     links:
       - db-host
@@ -29,6 +29,8 @@ services:
       - ADMIN_EMAIL=admin@email.arizona.edu
       - ADMIN_PSWD=password
       - FILESENDER_URL=http://localhost/upload
+      - FILESENDER_LOGOUT_URL=http://localhost
+      - FILESENDER_STORAGE=FilesystemPreserveName
       - FILESENDER_AUTHTYPE=saml
       - FILESENDER_AUTHSAML=static-user
       - CHOWN_WWW=333:333
@@ -63,6 +65,7 @@ services:
       - run.archivematica:/run/archivematica
       - incoming:/home
       - dashboard:/usr/share/archivematica/dashboard
+      - amatica/grid.html:/usr/share/archivematica/dashboard/templates/transfer/grid.html
 
   db-host:
     build: ./mysql
