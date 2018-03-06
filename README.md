@@ -76,8 +76,8 @@ The following environment variables control the archivematica docker container:
 * DB_USER - the database account owning the DB_DATABASE instance of archivematica tables. No value is necessary if using the internal mysql service.
 * DB_PASSWORD - the database account password. No value is necessary if using the internal mysql service.
 * DB_DATABASE - the db database namespace to contain the archivematica tables. The default value is 'MCP'.
-* AMATICA_DASHBOARD_LISTEN - the dashboard's gunicorn listen address. The default value is 127.0.0.1:8002. To use a unix socket, an example value would be unix:/run/amatica/dashboard.sock
-* AMATICA_STORAGE_LISTEN - the dashboard's gunicorn listen address. The default value is 127.0.0.1:8001. To use a unix socket, an example value would be unix:/run/amatica/storage.sock
+* AMATICA_DASHBOARD_LISTEN - the dashboard's gunicorn listen address. The default value is 127.0.0.1:8002. To use a unix socket, an example value would be unix:/run/archivematica/dashboard.sock
+* AMATICA_STORAGE_LISTEN - the dashboard's gunicorn listen address. The default value is 127.0.0.1:8001. To use a unix socket, an example value would be unix:/run/archivematica/storage.sock
 * AMATICA_OVERLAY_DIR - The directory which contains overlay archivematica source code files, which are applied after all of archivematica installation is completed. Default is /opt/archivematica.
 * AMATICA_NOSERVICE - keyword list of services to not run in the archivematica docker container. Multiple services can be listed seperated by a comman with no spaces, for instance 'postfix,mysql,elasticsearch'. Available keywords:
 postfix
@@ -92,7 +92,7 @@ postfix
   * nginx - the frontend nginx service
   * fits - the fits service
 
-These variables are set using the [setup-archivematica.sh](https://github.com/ualibraries/archivematica/blob/master/docker/setup-archivematica.sh) script, which runs in the filesender-phpfpm docker container the first time it starts up from the location /setup.sh.
+These variables are set using the [setup-archivematica.sh](https://github.com/ualibraries/archivematica/blob/master/docker/setup-archivematica.sh) script, which runs the first time the starts up.
 
 ### Persistant Mount Points
 
@@ -110,14 +110,14 @@ The following paths should be externally mounted to the filesystem, NAS, or a do
 
 ### Logging
 
-Logging occurs under a number of subdirectories under /var/log/. Note the uid:gid permissions need to match those of the service
+Logging occurs under a number of subdirectories under /var/log/. Note the uid:gid permissions need to match those of the respective service logging to those dirs:
 
-archivematica/ - processing
-elasticsearch/ - search
-gearman/ - processing workflow
-fits/    - image-procesing
-clamav/  - anti-virus
-nginx/   - web
+* archivematica/ - processing
+* elasticsearch/ - search
+* gearman/ - processing workflow
+* fits/    - image-procesing
+* clamav/  - anti-virus
+* nginx/   - web
 
 ## Deployment use cases
 
