@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # Check environment for uid:gid changes
-for USER in elasticsearch gearman clamav mysql archivematica; do
+for USER in elasticsearch gearman nginx clamav mysql archivematica; do
   UCUSER=`echo $USER | awk '{print toupper ($0)}'`
   eval "USERVAL=\$CHOWN_$UCUSER"
   if [ "$USERVAL" != "" ]; then
@@ -13,6 +13,7 @@ for USER in elasticsearch gearman clamav mysql archivematica; do
       case $USER in
           elasticsearch) OLD_ID=328 ;;
           gearman)       OLD_ID=329 ;;
+          nginx)         OLD_ID=330 ;;
           clamav)        OLD_ID=331 ;;
           mysql)         OLD_ID=332 ;;
           archivematica) OLD_ID=333 ;;
