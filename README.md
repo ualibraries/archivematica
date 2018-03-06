@@ -35,10 +35,10 @@ The first stage, happening within the Dockerfile, accomplishes:
 
 The second stage, happening the first time an archivematica docker container instance is ran, accomplishes:
 
-1. Change uid:gid values of system users per CHOWN_<USER>=uid:gid environment variables via the script [chown-archivemata.sh](https://github.com/ualibraries/archivematica/blob/master/docker/chown-archivematica.sh). Within the container, the script is located at /usr/share/archivematica/docker/chown-archivematica.sh.
-2. Installation of mysql, elasticsearch, archivematica-storage, archivematica-server, archivematica-client, archivematica-dashboard through the script [setup-archivemata.sh](https://github.com/ualibraries/archivematica/blob/master/docker/setup-archivematica.sh). Within the container, the script is located at /usr/share/archivematica/docker/setup-archivematica.sh.
-3. Email the sysadmin when the second stage is complete, with a log of second stage installtion through the script [setup-log-archivemata.sh](https://github.com/ualibraries/archivematica/blob/master/docker/setup-log-archivematica.sh). Within the container, the script is located at /usr/share/archivematica/docker/setup-log-archivematica.sh.
-4. Startup each of the services through the script [entrypoint-archivemata.sh](https://github.com/ualibraries/archivematica/blob/master/docker/service-archivematica.sh). Within the container, the script is located at /entrypoint-archivematica.sh.
+1. Change uid:gid values of system users per CHOWN_<USER>=uid:gid environment variables via the script [chown-archivematica.sh](https://github.com/ualibraries/archivematica/blob/master/docker/chown-archivematica.sh). Within the container, the script is located at /usr/share/archivematica/docker/chown-archivematica.sh.
+2. Installation of mysql, elasticsearch, archivematica-storage, archivematica-server, archivematica-client, archivematica-dashboard through the script [setup-archivematica.sh](https://github.com/ualibraries/archivematica/blob/master/docker/setup-archivematica.sh). Within the container, the script is located at /usr/share/archivematica/docker/setup-archivematica.sh.
+3. Email the sysadmin when the second stage is complete, with a log of second stage installtion through the script [setup-log-archivematica.sh](https://github.com/ualibraries/archivematica/blob/master/docker/setup-log-archivematica.sh). Within the container, the script is located at /usr/share/archivematica/docker/setup-log-archivematica.sh.
+4. Startup each of the services through the script [entrypoint-archivematica.sh](https://github.com/ualibraries/archivematica/blob/master/docker/service-archivematica.sh). Within the container, the script is located at /entrypoint-archivematica.sh.
 
 ## Dependencies
 This docker image of filesender requires the following environment dependencies:
