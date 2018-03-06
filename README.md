@@ -1,4 +1,4 @@
-rchivematica-docker
+# Archivematica-docker
 
 - [Introduction](#introduction)
 - [Packaging Strategy](#packaging)
@@ -13,7 +13,7 @@ Archivematica in a self-contained docker image
 
 This docker image was built from archivematica's installation [instructions](https://www.archivematica.org/en/docs/archivematica-1.6/admin-manual/installation/installation/)
 
-The 1.6 release of archivematica was not designed from the ground up to integrate with docker like the up-n-coming [1.7 release](https://github.com/artefactual-labs/am/blob/master/compose/README.md), so this docker container instance does not follow the standard practice of having a docker container per service all interconnected, instead putting most of the archivematica services all within a single container.
+The 1.6 release of archivematica was not designed from the ground up to integrate with docker like the up-n-coming [1.7 release](https://github.com/artefactual-labs/am/blob/master/compose/README.md), so this docker container instance does not follow the standard practice of having multiple docker containers all interconnected, each containing a single service. Instead most of the archivematica services are installed and running within a single container, though the container can exclude services from running via configuration if they are hosted externally, such as mysql.
 
 This release has a [docker-compose example](https://github.com/ualibraries/archivematica/tree/1.6.1-beta3/compose/shibboleth) integrating with shibboleth to provide only security protection. The up-n-coming 1.7 release has some [examples](https://github.com/JiscRDSS/rdss-archivematica) of full shibboleth integration where user attributes are used in addition to the security protection.
 
@@ -35,9 +35,10 @@ The first stage, happening within the Dockerfile, accomplishes:
 
 The second stage, happening the first time an archivematica docker container instance is ran, accomplishes:
 
-1. Change uid:gid values of system users per CHOWN_<USER>=uid:gid environment variables. [ /usr/share/archivematica/docker/chown-archivematica.sh ].
-2. Installation of mysql, elasticsearch, archivematica-storage, archivematica-server, archivematica-client, archivematica-dashboard [ /usr/share/archivematica/docker/setup-archivematica.sh ].
-3. Email the sysadmin when the second stage is complete, with a log of second stage installtion [ /usr/share/archivematica/docker/setup-log-archivematica.sh ].
+1. Change uid:gid values of system users per CHOWN_<USER>=uid:gid environment variables via the script [chown-archivemata.sh](https://github.com/ualibraries/archivematica/blob/master/docker/chown-archivematica.sh). Within the container, the script is located at /usr/share/archivematica/docker/chown-archivematica.sh.
+2. Installation of mysql, elasticsearch, archivematica-storage, archivematica-server, archivematica-client, archivematica-dashboard through the script [setup-archivemata.sh](https://github.com/ualibraries/archivematica/blob/master/docker/setup-archivematica.sh). Within the container, the script is located at /usr/share/archivematica/docker/setup-archivematica.sh.
+3. Email the sysadmin when the second stage is complete, with a log of second stage installtion through the script [setup-log-archivemata.sh](https://github.com/ualibraries/archivematica/blob/master/docker/setup-log-archivematica.sh). Within the container, the script is located at /usr/share/archivematica/docker/setup-log-archivematica.sh.
+4. Startup each of the services through the script [entrypoint-archivemata.sh](https://github.com/ualibraries/archivematica/blob/master/docker/service-archivematica.sh). Within the container, the script is located at /entrypoint-archivematica.sh.
 
 ## Dependencies
 This docker image of filesender requires the following environment dependencies:
@@ -56,56 +57,60 @@ This docker image of filesender requires the following environment dependencies:
 ## Docker Settings
 ### Environment Variables
 
-The following environment variables control the docker setup:
+The following environment variables control the archivematica docker container:
 
-- CHOWN_MYSQL
-- CHOWN_CLAMAV
-- CHOWN_GEARMAN
-- CHOWN_NGINX
-- CHOWN_ARCHIVEMATICA
-- CHOWN_ELASTICSEARCH
-- SMTP_DOMAIN=${SMTP_DOMAIN:-gmail.com}
-- SMTP_SERVER=${SMTP_SERVER:-smtp.gmail.com:587}
-- SMTP_FROM=${AMATICA_SMTP_FROM:-dockertestfilesender@gmail.com}
-- ADMIN_EMAIL=${AMATICA_ADMIN_EMAIL:-amatica_admin@gmail.com}
-- AMATICA_NOSERVICE=${AMATICA_NOSERVICE:-mysql,logfile}
-- AMATICA_DASHBOARD_LISTEN=${AMATICA_NOSERVICE:-mysql,logfile}
-- AMATICA_STORAGE_LISTEN=${AMATICA_NOSERVICE:-mysql,logfile}
-- AMATICA_OVERLAY_DIR=${AMATICA_NOSERVICE:-mysql,logfile}
-- DB_HOST=${AMATICA_DB_HOST:-db-host}
-- DB_PORT=${AMATICA_DB_HOST:-db-host}
-- DB_TYPE=${AMATICA_DB_HOST:-db-host}
-- DB_ADMIN=${AMATICA_DB_HOST:-db-host}
-- DB_USER=${AMATICA_DB_USER:-amaticaDBA}
-- DB_PASSWORD=${AMATICA_DB_PASSWORD:-amaticaPSWD}
-- DB_DATABASE=${AMATICA_DB_DATABASE:-MCP}
-- AMATICA_NOSERVICE
-
+* CHOWN_ELASTICSEARCH - used to over-ride the default elasticsearch uid:gid value 328:328
+* CHOWN_GEARMAN - used to over-ride the default gearman uid:gid value 329:329
+* CHOWN_NGINX - used to over-ride the default nginx uid:gid value 330:330
+* CHOWN_CLAMAV - used to over-ride the default clamav uid:gid value 331:331
+* CHOWN_MYSQL - used to over-ride the default mysql uid:gid value 332:332
+* CHOWN_ARCHIVEMATICA - used to over-ride the default archivematica uid:gid value 333:333
+* SMTP_DOMAIN - the default email domain, for instance for email address admin@email.abcde.org the value would be 'email.abcde.org'
+* SMTP_SERVER - the SMTP relayhost for sending email, for instance smtpgate.mail.abcde.org
+* SMTP_FROM - the default 'from' email address when archivematica sends messages, for instance archivematica-admin@email.abcd.org
+* ADMIN_EMAIL - the system administrator's email address for this instance of archivematica.
+* DB_HOST - the database host to connect to. No value is necessary if using the internal mysql service.
+* DB_PORT - the database port to connect to. No value is necessary if using the internal mysql service.
+* DB_TYPE - the database type being used, current supported values are 'mysql' and 'postgres'. No value is necessary if using mysql internally or externally.
+* DB_ADMIN - the database administrator account used to create the DB_DATABASE. No value is necessary if using the internal mysql service.
+* DB_USER - the database account owning the DB_DATABASE instance of archivematica tables. No value is necessary if using the internal mysql service.
+* DB_PASSWORD - the database account password. No value is necessary if using the internal mysql service.
+* DB_DATABASE - the db database namespace to contain the archivematica tables. The default value is 'MCP'.
+* AMATICA_DASHBOARD_LISTEN - the dashboard's gunicorn listen address. The default value is 127.0.0.1:8002. To use a unix socket, an example value would be unix:/run/amatica/dashboard.sock
+* AMATICA_STORAGE_LISTEN - the dashboard's gunicorn listen address. The default value is 127.0.0.1:8001. To use a unix socket, an example value would be unix:/run/amatica/storage.sock
+* AMATICA_OVERLAY_DIR - The directory which contains overlay archivematica source code files, which are applied after all of archivematica installation is completed. Default is /opt/archivematica.
+* AMATICA_NOSERVICE - keyword list of services to not run in the archivematica docker container. Multiple services can be listed seperated by a comman with no spaces, for instance 'postfix,mysql,elasticsearch'. Available keywords:
 postfix
-mysql
-elasticsearch
-clam
-gearman
-server
-client
-storage
-dashboard
-nginx
-fits
-   
+  * mysql - the mysql server
+  * elasticsearch - the elasticsearch server
+  * clam - the clamav service
+  * gearman - the gearman service
+  * server - the archivematica mcp service
+  * client - the archivematica mcp client
+  * storage - the archivematica storage service
+  * dashboard - the archivematica dashboard service
+  * nginx - the frontend nginx service
+  * fits - the fits service
+
+These variables are set using the [setup-archivematica.sh](https://github.com/ualibraries/archivematica/blob/master/docker/setup-archivematica.sh) script, which runs in the filesender-phpfpm docker container the first time it starts up from the location /setup.sh.
+
 ### Persistant Mount Points
-- run.archivematica:/run/archivematica
-- ./amatica/overlay:/opt/archivematica
-- ${AMATICA_LOG_DIR:-./log/amatica}:/var/log
-- ${ELASTIC_DAT_DIR:-./persistant/elasticsearch}:/var/lib/elasticsearch
-- ${GEARMAN_DAT_DIR:-./persistant/gearman}:/var/lib/gearman
-- ${CLAMAV_DAT_DIR:-./persistant/clamav}:/var/lib/clamav
-- ${AMATICA_INC_DIR:-./persistant/filesender}:/home
-- ${AMATICA_DAT_DIR:-./persistant/archivematica}:/var/archivematica
+
+Archivematica and it's dependant services have a number of directories that contain files which need to persist across upgrades for production deployments.
+
+The following paths should be externally mounted to the filesystem, NAS, or a docker volume. Note that the service name's uid:gid is applied to all directories and files under the respective root because those services run as that uid:gid.
+
+* /var/log - contains a number of service log files and directories. See the [logging](#logging) section for more details.
+* /var/lib/elasticsearch - contains persistance data for elasticsearch
+* /var/lib/gearman - contains persistance data for gearman
+* /var/lib/clamav - contains persistance data for clamav
+* /var/lib/mysql - contains persistance data for mysql
+* /home - the archivematica "incoming" directory for content that should get transferred into the system
+* /var/archivematica - the archivematica "storage" directory for content it has ingested. This includes by default the processed AIP and DIP content.
 
 ### Logging
 
-Logging occurs under a number of subdirectories under /var/log/:
+Logging occurs under a number of subdirectories under /var/log/. Note the uid:gid permissions need to match those of the service
 
 archivematica/ - processing
 elasticsearch/ - search
@@ -113,33 +118,6 @@ gearman/ - processing workflow
 fits/    - image-procesing
 clamav/  - anti-virus
 nginx/   - web
-
-* FILESENDER_URL - full URL to enter in the browser to bring up filesender
-* FILESENDER_AUTHTYPE - used by the 2.x series with the possible values:
-  * shibboleth - use shibboleth for authentication
-  * saml - use simplesamlphp for authentication
-  * fake - use a fake user to authenticate.
-* FILESENDER_AUTHSAML - when using simplesaml for authentication, which is the only option with the 1.x series, the authentication type to use as defined in simplesamlphps's [config/authsources.php](https://github.com/ualibraries/filesender-phpfpm/tree/1.6/compose/simplesaml/simplesamlphp/config) file.
-* MAIL_ATTR, NAME_ATTR, UID_ATTR - depending on the value of FILESENDER_AUTHTYPE:
-  * shibboleth - the fastcgi environment variable containing the attribute value.
-  * simplesamlphp - the saml attribute name to use.
-  * fake - the actual value to use
-* DB_HOST - the database hostname to connect to.
-* DB_NAME - the database namespace to install filesender tables into
-* DB_USER - the database user to connecto the database system with
-* DB_PASSWORD - the database user password
-* SMTP_SERVER - the SMTP server to send email through. It must be a valid server for filesender to work.
-* SMTP_TLS - The SMTP server requires TLS encrypted communication
-* SMTP_USER - the optional user account needed to connect to the SMTP server
-* SMTP_PSWD - the optional SMTP user account password
-* CHOWN_WWW - An optional uid:gid value for filesender to run as. It is most relevent when docker mounting the container's /data directory to store uploads on the host filesystem. Filesender should be running as the user owning the host system directory, otherwise upload permission errors will occur.
-* ADMIN_EMAIL - email address of the filesender admin account, must be valid
-* ADMIN_USERS - the set of user accounts that should be considered administrators
-* ADMIN_PSWD - the password to use for the admin account 
-* SIMPLESAML_MODULES - the space seperated list of simplesaml [module directories](https://github.com/simplesamlphp/simplesamlphp/tree/master/modules) to enable for authentication and filtering. Usually enabling one of these modules requires setting configuration settings for it in the [authsources.php](https://github.com/ualibraries/filesender-phpfpm/tree/1.6/compose/simplesaml/simplesamlphp/config) file.
-* SIMPLESAML_SALT - an optional simplesaml salt value to use. A value will get auto-generated on first time startup if missing.
-
-These variables are set using the [setup.sh](https://github.com/ualibraries/filesender-phpfpm/blob/2.0-beta2/docker/setup.sh) script, which runs in the filesender-phpfpm docker container the first time it starts up from the location /setup.sh.
 
 ## Deployment use cases
 
