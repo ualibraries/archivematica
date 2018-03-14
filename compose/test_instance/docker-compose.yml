@@ -1,0 +1,17 @@
+version: '2'
+services:
+
+  archivematica:
+    image: 'uazlibraries/archivematica:1.6.1-beta1'
+    restart: always
+    ports:
+      - "80:80"
+      - "8000:8000"
+    environment:
+      - SMTP_DOMAIN=gmail.com
+      - SMTP_SERVER=smtp.gmail.com:587
+      - SMTP_FROM=dockertestfilesender@gmail.com
+      - ADMIN_EMAIL=amatica_admin@gmail.com
+      - AMATICA_NOSERVICE=logfile
+   volumes:
+      - ./incoming:/home

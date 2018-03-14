@@ -123,47 +123,11 @@ Logging occurs under a number of subdirectories under /var/log/. Note the uid:gi
 
 This docker image has been tested under the following deployment scanarios:
 
-1. [Throw-away self-contained test instance](#test-instance).
+1. [Throw-away self-contained test instance](https://github.com/ualibraries/archivematica/tree/1.6.1-beta4/compose/test_instance)
 2. [Self-contained instance, good across upgrades](#upgradeable)
-3. [External mysql](#external_mysql)
+3. [External mysql](https://github.com/ualibraries/archivematica/tree/1.6.1-beta4/compose/external_mysql)
 4. [External nginx](#external_nginx)
 5. [Filesender integration](#filesender)
-
-## Test Instance
-
-This example quickly creates an archivematica instance to test with. Any processed content/logs/state will get erased if the docker container is recreated.
-
-### Pre-requisites
-
-#### Email Settings
-
-SMTP_DOMAIN=abcd.edu
-SMTP_HOST=smtp.abcd.edu
-SMTP_FROM=archivematica-admin@abcd.edu
-SMTP_ADMIN=admin@abcd.edu
-
-#### Host directories
-
-AMATICA_INCOMING_DIR=/home
-
-```
-`#!/bin/sh
-
-AMATICA_INCOMING_DIR=/mnt/archivematica-dev-home
-
-docker run -d \
-       --restart=unless-stopped \
-       -p 80:80 \
-       -p 8000:8000 \
-       -e SMTP_DOMAIN=abcd.edu \
-       -e SMTP_HOST=smtp.abcd.edu \
-       -e SMTP_FROM=archivematica-admin@abcd.edu \
-       -e SMTP_ADMIN=admin@abcd.edu \
-       -v $AMATICA_INCOMING_DIR:/home \
-       --name amatica \
-       uazlibraries/archivematica:1.6.1-beta1
-
-```
 
 ## Upgradeable
 

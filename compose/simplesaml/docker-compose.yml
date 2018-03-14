@@ -51,10 +51,10 @@ services:
     links:
       - db-host
     environment:
-      - SMTP_DOMAIN=email.arizona.edu
-      - SMTP_HOST=smtpgate.mail.arizona.edu
-      - SMTP_FROM=admin@email.arizona.edu
-      - SMTP_ADMIN=admin@email.arizona.edu
+      - SMTP_DOMAIN=gmail.com
+      - SMTP_SERVER=smtp.gmail.com:587
+      - SMTP_FROM=dockertestfilesender@gmail.com
+      - ADMIN_EMAIL=amatica_admin@gmail.com
       - AMATICA_NOSERVICE=mysql,logfile
       - AMATICA_DASHBOARD_LISTEN=unix:/run/archivematica/dashboard.sock
       - DB_HOST=db-host
