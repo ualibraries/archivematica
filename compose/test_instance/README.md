@@ -19,7 +19,7 @@ Archivematica's default directory for transferring in content to process is the 
 
 ```
    volumes:
-      - /home:/home
+      - ./incoming:/home
 ```
 
 ### Shell script
@@ -30,7 +30,9 @@ An equivalent shell script to the [docker-compose.yml](https://github.com/ualibr
   
     #!/bin/sh
     
-    AMATICA_INCOMING_DIR=/home
+    AMATICA_INCOMING_DIR=./incoming
+
+    mkdir -p "$AMATICA_INCOMING_DIR"
     
     docker run -d \
            --restart=unless-stopped \
