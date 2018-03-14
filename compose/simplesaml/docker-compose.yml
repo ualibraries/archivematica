@@ -20,7 +20,7 @@ services:
       - dashboard:/opt/dashboard
 
   fpm:
-    image: 'uazlibraries/filesender-phpfpm:branch-StorageFilesystemPreserveName'
+    image: 'uazlibraries/filesender-phpfpm:2.0-beta4'
     restart: always
     links:
       - db-host
@@ -46,7 +46,7 @@ services:
       - ./simplesamlphp/config/authsources.php:/opt/simplesamlphp/config/authsources.php
 
   amatica:
-    image: 'uazlibraries/archivematica:1.6.1-beta3'
+    image: 'uazlibraries/archivematica:1.6.1-beta4'
     restart: always
     links:
       - db-host

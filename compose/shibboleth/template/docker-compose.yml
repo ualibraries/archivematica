@@ -24,7 +24,7 @@ services:
       - ${NGINX_LOG_DIR:-./log/nginx}:/var/log/nginx
 
   fpm:
-    image: 'uazlibraries/filesender-phpfpm:branch-StorageFilesystemPreserveName'
+    image: 'uazlibraries/filesender-phpfpm:2.0-beta4'
     restart: always
     links:
       - db-host
@@ -55,7 +55,7 @@ services:
       - simplesaml:/opt/simplesamlphp
 
   amatica:
-    image: 'uazlibraries/archivematica:1.6.1-beta3'
+    image: 'uazlibraries/archivematica:1.6.1-beta4'
     restart: always
     links:
       - db-host
