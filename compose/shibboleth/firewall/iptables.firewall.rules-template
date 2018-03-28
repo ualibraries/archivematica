@@ -21,6 +21,7 @@
 -A INPUT -p tcp -s 192.168.238.0/23 --dport 22 -j ACCEPT
 -A INPUT -p tcp -s 192.168.135.64/26 --dport 22 -j ACCEPT
 -A INPUT -p tcp -s 192.168.155.0/24  --dport 22 -j ACCEPT
+-A INPUT -p tcp -s 192.168.113.192/255.255.255.240 --dport 22 -j ACCEPT
 
 #  Allow ping
 -A INPUT -p icmp -m icmp --icmp-type 8 -j ACCEPT
