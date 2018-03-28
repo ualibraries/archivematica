@@ -51,8 +51,14 @@ if [ "`echo $AMATICA_NOSERVICE | grep -i mail`" = "" ]; then
   cat $SETUP_DIR/startup-complete.txt | sendmail $SENDMAIL_ENDPOINTS
 fi
 
+DAYELAPSE=$((0))
 if [ "$2" = "FOREGROUND" ]; then
   while [ $? -eq "0" ]; do
+    $DAYELAPSE=$(($DAYELAPSE + 10))
+    if [ "$DAYELAPSE" -gt "86400" ]; then
+      DAYELAPSE=$((0))
+      freshclam &
+    fi
     sleep 10
     ps -ef | grep gearman | grep -v grep > /dev/null
   done

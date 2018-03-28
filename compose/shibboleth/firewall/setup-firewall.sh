@@ -37,6 +37,7 @@ function sed_file {
       -e "s|192.168.155.0/24|$FIREWALL_SUBNET_5|g" \
       -e "s|shibboleth.abcde.edu|$FIREWALL_SHIBBOLETH|g" \
       -e "s|smtp.abcde.edu|$FIREWALL_SMTP|g" \
+      -e "s|antivirus.abcde.edu|$FIREWALL_ANTIVIRUS|g" \
       -e "s|ens160|$FIREWALL_DEVICE|g" \
       "$DSTFILE"
 }
