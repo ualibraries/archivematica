@@ -41,7 +41,7 @@ The second stage, happening the first time an archivematica docker container ins
 4. Startup each of the services through the script [entrypoint-archivematica.sh](https://github.com/ualibraries/archivematica/blob/master/docker/service-archivematica.sh). Within the container, the script is located at /entrypoint-archivematica.sh.
 
 ## Dependencies
-This docker image of filesender requires the following environment dependencies:
+This docker image of archivematica requires the following environment dependencies:
 
 ### Host system dependencies
 1. [docker-compose](https://docs.docker.com/compose/overview/) is installed on the system.
