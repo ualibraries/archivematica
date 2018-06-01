@@ -125,6 +125,7 @@ function docker_compose_up {
   export AM_PIPELINE_DATA=${AMATICA_DAT_DIR}
   export SS_LOCATION_DATA=${AMATICA_INC_DIR}
   docker volume create --opt type=none --opt o=bind --opt device=${MYSQL_DAT_DIR} am-mysql-data
+  docker volume create --opt type=none --opt o=bind --opt device=${ELASTIC_DAT_DIR} am-elasticsearch-data
 
   make create-volumes
   docker-compose up -d --build

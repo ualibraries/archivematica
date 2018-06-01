@@ -5,3 +5,7 @@ volumes:
     external:
       name: "am-mysql-data"
 
+  elasticsearch_data:
+    external:
+      name: "am-elasticsearch-data"
+
