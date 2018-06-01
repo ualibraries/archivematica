@@ -114,8 +114,9 @@ function docker_compose_up {
   # setup softlinks so commands below will work:
   test -L etc || ln -s ../overlay/compose/etc .
   test -L Makefile || ln -s ../overlay/compose/Makefile .
-  test -L docker-compose.yml || ln -s ../overlay/docker-compose.yml .
+  test -L docker-compose.yml || ln -s ../overlay/compose/docker-compose.yml .
   test -L ../src || cd .. && ln -s overlay/src . && cd -
+  test -L src || ln -s ../overlay/src .
   
   # Taken from https://github.com/artefactual-labs/am/tree/master/compose
   cd ../overlay
@@ -123,17 +124,12 @@ function docker_compose_up {
   cd -
   export AM_PIPELINE_DATA=${AMATICA_DAT_DIR}
   export SS_LOCATION_DATA=${AMATICA_INC_DIR}
-  make create-volumes
-
-  #docker volume create --opt type=none --opt o=bind --opt device=/tmp/mysql_test am-mysql-data
   docker volume create --opt type=none --opt o=bind --opt device=${MYSQL_DAT_DIR} am-mysql-data
-  #docker volume create --opt type=none --opt o=bind --opt device=$(AM_PIPELINE_DATA) mysql_data
-  
+
+  make create-volumes
   docker-compose up -d --build
   sleep 60
-  #mv docker-compose.override.yml docker-compose.override.yml.1
   make bootstrap
-  #mv docker-compose.override.yml.1 docker-compose.override.yml
   make restart-am-services
 }
 
@@ -208,7 +204,7 @@ sed_file template/fastcgi_filesender web/nginx/conf.d/fastcgi_filesender
 sed_file template/require_shib_session web/nginx/conf.d/require_shib_session
 
 echo "CONFIGURING docker-compose"
-#sed_file template/docker-compose.yml docker-compose.yml
+sed_file template/docker-compose.override.yml docker-compose.override.yml
 
 if [ "$RUN_MODE" != "config_only" ]; then
   docker_compose_up
