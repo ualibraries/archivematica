@@ -24,8 +24,8 @@ cd $SETUP_DIR
 
 GIVENIP=$1
 HOSTIP=$1
-PERSISTANT_DIR=${2:-./persistant}
-LOGGING_DIR=${3:-./log}
+PERSISTANT_DIR=${2:-/tmp/amatica/persistant}
+LOGGING_DIR=${3:-/tmp/amatica/log}
 RUN_MODE=$4
 
 if [ "$HOSTIP" = "" ]; then
