@@ -1,0 +1,4 @@
+[submodule "compose/overlay"]
+	path = compose/overlay
+	url = https://github.com/artefactual-labs/am.git
+	branch = stable/1.7.x

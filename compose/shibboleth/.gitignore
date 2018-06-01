@@ -3,3 +3,7 @@
 docker-filesender-phpfpm-shibboleth-*
 /persistant/
 /log/
+Makefile
+etc
+src
+../src

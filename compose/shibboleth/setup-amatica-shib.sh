@@ -1,5 +1,5 @@
 #!/bin/bash
-#set -x
+set -x
 
 REQUIRED="hostname perl sed openssl docker-compose nc curl id /usr/sbin/addgroup /usr/sbin/adduser"
 
@@ -110,7 +110,31 @@ function docker_compose_up {
   
   docker-compose config
   echo
-  docker-compose up -d
+
+  # setup softlinks so commands below will work:
+  test -L etc || ln -s ../overlay/compose/etc .
+  test -L Makefile || ln -s ../overlay/compose/Makefile .
+  test -L docker-compose.yml || ln -s ../overlay/docker-compose.yml .
+  test -L ../src || cd .. && ln -s overlay/src . && cd -
+  
+  # Taken from https://github.com/artefactual-labs/am/tree/master/compose
+  cd ../overlay
+  git submodule update --init --recursive
+  cd -
+  export AM_PIPELINE_DATA=${AMATICA_DAT_DIR}
+  export SS_LOCATION_DATA=${AMATICA_INC_DIR}
+  make create-volumes
+
+  #docker volume create --opt type=none --opt o=bind --opt device=/tmp/mysql_test am-mysql-data
+  docker volume create --opt type=none --opt o=bind --opt device=${MYSQL_DAT_DIR} am-mysql-data
+  #docker volume create --opt type=none --opt o=bind --opt device=$(AM_PIPELINE_DATA) mysql_data
+  
+  docker-compose up -d --build
+  sleep 60
+  #mv docker-compose.override.yml docker-compose.override.yml.1
+  make bootstrap
+  #mv docker-compose.override.yml.1 docker-compose.override.yml
+  make restart-am-services
 }
 
 METADATA_URL="https://$HOSTIP/Shibboleth.sso/Metadata"
@@ -184,7 +208,7 @@ sed_file template/fastcgi_filesender web/nginx/conf.d/fastcgi_filesender
 sed_file template/require_shib_session web/nginx/conf.d/require_shib_session
 
 echo "CONFIGURING docker-compose"
-sed_file template/docker-compose.yml docker-compose.yml
+#sed_file template/docker-compose.yml docker-compose.yml
 
 if [ "$RUN_MODE" != "config_only" ]; then
   docker_compose_up
