@@ -133,7 +133,7 @@ function docker_compose_up {
 
   make create-volumes
   docker-compose up -d --build
-  sleep 60
+  timeout 60 docker-compose logs --follow
   make bootstrap
   make restart-am-services
 }

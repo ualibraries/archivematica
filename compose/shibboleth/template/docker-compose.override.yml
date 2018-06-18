@@ -16,7 +16,6 @@ services:
     volumes:
       - run.php:/run/php
       - run.shibboleth:/run/shibboleth
-      - run.archivematica:/run/archivematica
       - filesender:/opt/filesender
       - simplesaml:/opt/simplesamlphp
       - ${NGINX_ICON_DIR:-./web/icon}:/opt/brand
@@ -28,7 +27,7 @@ services:
     image: 'uazlibraries/filesender-phpfpm:2.0-rc1'
     restart: always
     links:
-      - db-host
+      - mysql
     environment:
       - SMTP_SERVER=${SMTP_SERVER:-smtp.gmail.com:587}
       - SMTP_TLS=${SMTP_TLS:-true}
@@ -44,7 +43,7 @@ services:
       - NAME_ATTR=${FILESENDER_NAME_ATTR:-EPPN}
       - UID_ATTR=${FILESENDER_UID_ATTR:-EPPN}
       - CHOWN_WWW=${FILESENDER_CHOWN_WWW:-333:333}
-      - DB_HOST=${FILESENDER_DB_HOST:-db-host}
+      - DB_HOST=${FILESENDER_DB_HOST:-mysql}
       - DB_NAME=${FILESENDER_DB_NAME:-filesender}
       - DB_USER=${FILESENDER_DB_USER:-filesenderDBA}
       - DB_PASSWORD=${FILESENDER_DB_PASSWORD:-filesenderPSWD}
