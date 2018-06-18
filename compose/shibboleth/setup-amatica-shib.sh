@@ -122,8 +122,12 @@ function docker_compose_up {
   cd ../overlay
   git submodule update --init --recursive
   cd -
+
+  # Integrate with amatica persistant storage mechanism for input and storage
   export AM_PIPELINE_DATA=${AMATICA_DAT_DIR}
   export SS_LOCATION_DATA=${AMATICA_INC_DIR}
+
+  # Add our own persistant storage for mysql and elasticsearch
   docker volume create --opt type=none --opt o=bind --opt device=${MYSQL_DAT_DIR} am-mysql-data
   docker volume create --opt type=none --opt o=bind --opt device=${ELASTIC_DAT_DIR} am-elasticsearch-data
 
