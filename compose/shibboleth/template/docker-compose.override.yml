@@ -66,6 +66,15 @@ services:
       - ${SUPERVISOR_LOG_DIR:-./log/supervisor}:/var/log/supervisor
       - ${AMATICA_DAT_DIR:-am-pipeline-data}:/var/archivematica
 
+  archivematica-dashboard:
+    environment:
+      SS_SHIBBOLETH_AUTHENTICATION: "true"
+      ARCHIVEMATICA_DASHBOARD_DASHBOARD_SHIBBOLETH_AUTHENTICATION: "true"
+      
+  archivematica-storage-service:
+    environment:
+      SS_SHIBBOLETH_AUTHENTICATION: "true"
+      
   mysql:
     volumes:
       - "./mysql/create-filesender-db.sql:/docker-entrypoint-initdb.d/create-filesender-db.sql"
