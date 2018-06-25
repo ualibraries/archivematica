@@ -6,9 +6,9 @@ services:
     restart: always
     tty: true
     links:
-      - fpm
-      - nginx
-      - shib
+      - "fpm"
+      - "nginx"
+      - "shib"
     ports:
       - 80:80
       - 443:443
@@ -66,12 +66,20 @@ services:
       - ${SUPERVISOR_LOG_DIR:-./log/supervisor}:/var/log/supervisor
       - ${AMATICA_DAT_DIR:-am-pipeline-data}:/var/archivematica
 
+  archivematica-mcp-server:
+    image: "ualibraries/archivematica:mcp-server-1.7.1"
+
+  archivematica-mcp-client:
+    image: "ualibraries/archivematica:mcp-client-1.7.1"
+
   archivematica-dashboard:
+    image: "ualibraries/archivematica:dashboard-1.7.1"
     environment:
       SS_SHIBBOLETH_AUTHENTICATION: "true"
       ARCHIVEMATICA_DASHBOARD_DASHBOARD_SHIBBOLETH_AUTHENTICATION: "true"
       
   archivematica-storage-service:
+    image: "ualibraries/archivematica:storage-service-1.7.1"
     environment:
       SS_SHIBBOLETH_AUTHENTICATION: "true"
       
