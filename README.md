@@ -9,11 +9,9 @@
 
 ## Introduction
 
-Archivematica in a self-contained docker image
+Archivematica built from artifactual sources. This [1.7.x series](https://github.com/artefactual-labs/am/blob/master/compose/README.md) was designed from the ground up to work with docker - each service has it's own container.
 
 This docker image was built from archivematica's installation [instructions](https://www.archivematica.org/en/docs/archivematica-1.6/admin-manual/installation/installation/)
-
-The 1.6 release of archivematica was not designed from the ground up to integrate with docker like the up-n-coming [1.7 release](https://github.com/artefactual-labs/am/blob/master/compose/README.md), so this docker container instance does not follow the standard practice of having multiple docker containers all interconnected, each containing a single service. Instead most of the archivematica services are installed and running within a single container, though the container can exclude services from running via configuration if they are hosted externally, such as mysql.
 
 This release has a [docker-compose example](https://github.com/ualibraries/archivematica/tree/1.6.1-beta3/compose/shibboleth) integrating with shibboleth to provide only security protection. The up-n-coming 1.7 release has some [examples](https://github.com/JiscRDSS/rdss-archivematica) of full shibboleth integration where user attributes are used in addition to the security protection.
 
