@@ -9,7 +9,7 @@
 
 ## Introduction
 
-Archivematica built from artifactual sources. This [1.7.x series](https://github.com/artefactual-labs/am/blob/master/compose/README.md) was designed from the ground up to work with docker - each service has it's own container.
+Archivematica built from artifactual sources. This [1.7.x series](https://github.com/artefactual-labs/am/blob/master/compose/README.md) was designed from the ground up to work with docker - each service has it's own container. Test2
 
 This docker image was built from archivematica's installation [instructions](https://www.archivematica.org/en/docs/archivematica-1.6/admin-manual/installation/installation/)
 
