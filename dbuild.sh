@@ -14,5 +14,5 @@ git submodule update --init --recursive
 
 for SCRIPT in $DBUILD_SCRIPTS; do
   echo "LAUNCHING $SCRIPT"
-  ./$SCRIPT $ACTION
+  #./$SCRIPT $ACTION
 done
