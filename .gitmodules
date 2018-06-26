@@ -1,5 +1,13 @@
-[submodule "compose/overlay"]
-	path = compose/overlay
+[submodule "compose/artefactual-labs"]
+	path = compose/artefactual-labs
 	url = https://github.com/artefactual-labs/am.git
 	branch = stable/1.7.x
+[submodule "compose/artefactual-labs/archivematica"]
+	path = compose/artefactual-labs/src/archivematica
+	url = https://github.com/artefactual/archivematica
+	branch = stable/1.7.x
+[submodule "compose/artefactual-labs/archivematica-storage-service"]
+	path = compose/artefactual-labs/src/archivematica-storage-service
+	url = https://github.com/artefactual/archivematica-storage-service
+	branch = stable/0.11.x
 #	branch = dev/pipeline-stable-1.7.x

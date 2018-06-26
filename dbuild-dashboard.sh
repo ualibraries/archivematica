@@ -8,7 +8,7 @@ REPOSITORY=${3:-archivematica}
 TAG=${2:-dashboard-1.7.1}
 ACTION=${1:-BUILD}
 DAEMONIZE=-d
-BUILDPATH="compose/overlay/src/archivematica/src"
+BUILDPATH="compose/artefactual-labs/src/archivematica/src"
 DOCKERFILE="$BUILDPATH/dashboard.Dockerfile"
 
 # Delete test container built from docker file

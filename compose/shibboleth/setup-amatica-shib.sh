@@ -112,14 +112,14 @@ function docker_compose_up {
   echo
 
   # setup softlinks so commands below will work:
-  test -L etc || ln -s ../overlay/compose/etc .
-  test -L Makefile || ln -s ../overlay/compose/Makefile .
-  test -L docker-compose.yml || ln -s ../overlay/compose/docker-compose.yml .
-  test -L ../src || cd .. && ln -s overlay/src . && cd -
-  test -L src || ln -s ../overlay/src .
+  test -L etc || ln -s ../artefactual-labs/compose/etc .
+  test -L Makefile || ln -s ../artefactual-labs/compose/Makefile .
+  test -L docker-compose.yml || ln -s ../artefactual-labs/compose/docker-compose.yml .
+  test -L ../src || cd .. && ln -s artefactual-labs/src . && cd -
+  test -L src || ln -s ../artefactual-labs/src .
   
   # Taken from https://github.com/artefactual-labs/am/tree/master/compose
-  cd ../overlay
+  cd ../artefactual-labs
   git submodule update --init --recursive
   cd -
 
