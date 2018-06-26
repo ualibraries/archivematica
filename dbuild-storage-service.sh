@@ -8,7 +8,7 @@ REPOSITORY=${3:-archivematica}
 TAG=${2:-storage-service-1.7.1}
 ACTION=${1:-BUILD}
 DAEMONIZE=-d
-BUILDPATH="compose/artefactual-labs/src/archivematica-storage-service"
+BUILDPATH="docker/archivematica-storage-service"
 DOCKERFILE="$BUILDPATH/Dockerfile"
 
 # Delete test container built from docker file

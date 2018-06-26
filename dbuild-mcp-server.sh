@@ -8,7 +8,7 @@ REPOSITORY=${3:-archivematica}
 TAG=${2:-mcp-server-1.7.1}
 ACTION=${1:-BUILD}
 DAEMONIZE=-d
-BUILDPATH="compose/artefactual-labs/src/archivematica/src"
+BUILDPATH="docker/archivematica/src"
 DOCKERFILE="$BUILDPATH/MCPServer.Dockerfile"
 
 # Delete test container built from docker file

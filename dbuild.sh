@@ -10,7 +10,7 @@ ACTION=${1:-BUILD}
 DAEMONIZE=-d
 DBUILD_SCRIPTS=`ls dbuild-*.sh`
 
-git submodule update --init --recursive
+git submodule update --init
 
 for SCRIPT in $DBUILD_SCRIPTS; do
   echo "LAUNCHING $SCRIPT"
