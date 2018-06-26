@@ -1,4 +1,5 @@
 [submodule "compose/overlay"]
 	path = compose/overlay
 	url = https://github.com/artefactual-labs/am.git
-	branch = dev/pipeline-stable-1.7.x
+	branch = stable/1.7.x
+#	branch = dev/pipeline-stable-1.7.x
