@@ -115,12 +115,14 @@ function docker_compose_up {
   test -L etc || ln -s ../artefactual-labs/compose/etc .
   test -L Makefile || ln -s ../artefactual-labs/compose/Makefile .
   test -L docker-compose.yml || ln -s ../artefactual-labs/compose/docker-compose.yml .
-  test -L ../src || cd .. && ln -s artefactual-labs/src . && cd -
-  test -L src || ln -s ../artefactual-labs/src .
+  #test -L ../src || cd .. && ln -s artefactual-labs/src . && cd -
+  #test -L src || ln -s ../artefactual-labs/src .
   
   # Taken from https://github.com/artefactual-labs/am/tree/master/compose
   cd ../artefactual-labs
-  git submodule update --init --recursive
+  # Purposefully not doing un-necessary git submodule update --init --recursive
+  git submodule update --init
+  #git submodule update --init --recursive
   cd -
 
   # Integrate with amatica persistant storage mechanism for input and storage
