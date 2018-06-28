@@ -55,7 +55,6 @@ else
     
     docker run $DAEMONIZE $DEBUG \
        --net=compose_default \
-       -p 80:80 \
        -p 8000:8000 \
        -e SMTP_DOMAIN=email.arizona.edu \
        -e SMTP_HOST=smtpgate.mail.arizona.edu \

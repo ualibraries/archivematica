@@ -85,7 +85,7 @@ services:
       - "archivematica_pipeline_data:/var/archivematica/sharedDirectory:rw"
       
   archivematica-storage-service:
-    image: "uazlibraries/archivematica:storage-service-1.7.1"
+    image: "archivematica:storage-service-1.7.1"
     environment:
       SS_SHIBBOLETH_AUTHENTICATION: "true"
     volumes:
