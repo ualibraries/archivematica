@@ -114,8 +114,12 @@ function docker_compose_up {
   # setup softlinks so commands below will work:
   test -L etc || ln -s ../artefactual-labs/compose/etc .
   test -L Makefile || ln -s ../artefactual-labs/compose/Makefile .
-  test -L docker-compose.yml || ln -s ../artefactual-labs/compose/docker-compose.yml .
-  #test -L ../src || cd .. && ln -s artefactual-labs/src . && cd -
+  test -L ../src || cd .. && ln -s artefactual-labs/src . && cd -
+  cat ../artefactual-labs/compose/docker-compose.yml | \
+    sed -e '/build:/d' \
+        -e '/context:/d' \
+        -e '/dockerfile:/d' \
+        > docker-compose.yml
   #test -L src || ln -s ../artefactual-labs/src .
   
   # Taken from https://github.com/artefactual-labs/am/tree/master/compose
@@ -134,7 +138,9 @@ function docker_compose_up {
   docker volume create --opt type=none --opt o=bind --opt device=${ELASTIC_DAT_DIR} am-elasticsearch-data
 
   make create-volumes
-  docker-compose up -d --build
+  docker-compose build web
+  docker-compose build shib
+  docker-compose up -d
   timeout 60 docker-compose logs --follow
   make bootstrap
   make restart-am-services
