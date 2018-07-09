@@ -74,31 +74,9 @@ for AMATICA_DIR in $AMATICA_LIST; do
   fi
 done
 
-LOGDIR_LIST="shibboleth amatica nginx filesender mysql supervisor"
-
-if [ ! -d "$LOGGING_DIR/amatica/archivematica" ]; then
-for LOGDIR in $LOGDIR_LIST; do
-  echo "CREATELOGDIR: $LOGGING_DIR/$LOGDIR"
-  sudo mkdir -vp "$LOGGING_DIR/$LOGDIR"
-  sudo chmod 777 "$LOGGING_DIR/$LOGDIR"
-done
-
-  cd "$LOGGING_DIR"
-  sudo tar -xzvf $SETUP_DIR/template/var.log.archivematica.tar.gz
-  sudo mv var.log.archivematica/* amatica
-  sudo rmdir var.log.archivematica
-  cd -
-fi
-
 function docker_compose_up {
   echo "CREATING docker containers in background with configuration saved in $SETUP_DIR/.env"
   echo
-  export NGINX_LOG_DIR=${NGINX_LOG_DIR:-"$LOGGING_DIR/nginx"}
-  export SHIBBOLETH_LOG_DIR=${SHIBBOLETH_LOG_DIR:-"$LOGGING_DIR/shibboleth"}
-  export SUPERVISOR_LOG_DIR=${SUPERVISOR_LOG_DIR:-"$LOGGING_DIR/supervisor"}
-  export AMATICA_LOG_DIR=${AMATICA_LOG_DIR:-"$LOGGING_DIR/amatica"}
-  export FILESENDER_LOG_DIR=${FILESENDER_LOG_DIR:-"$LOGGING_DIR/filesender"}
-  export FILESENDER_DAT_DIR=${FILESENDER_DAT_DIR:-"$PERSISTANT_DIR/filesender"}
   export ELASTIC_DAT_DIR=${ELASTIC_DAT_DIR:-"$PERSISTANT_DIR/elasticsearch"}
   export GEARMAN_DAT_DIR=${GEARMAN_DAT_DIR:-"$PERSISTANT_DIR/gearman"}
   export CLAMAV_DAT_DIR=${CLAMAV_DAT_DIR:-"$PERSISTANT_DIR/clamav"}
@@ -137,6 +115,7 @@ function docker_compose_up {
   # Add our own persistant storage for mysql and elasticsearch
   docker volume create --opt type=none --opt o=bind --opt device=${MYSQL_DAT_DIR} am-mysql-data
   docker volume create --opt type=none --opt o=bind --opt device=${ELASTIC_DAT_DIR} am-elasticsearch-data
+  docker volume create --opt type=none --opt o=bind --opt device=${CLAMAV_DAT_DIR} am-clamav-data
 
   make create-volumes
   docker-compose build web
