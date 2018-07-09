@@ -108,6 +108,19 @@ function docker_compose_up {
 
   printenv | grep -e "AMATICA\|NGINX\|FILESENDER\|SMTP_\|MYSQL_\|DAT_DIR\|LOG_DIR\|ETC_DIR" | sort > "$SETUP_DIR/.env"
   
+  # Taken from https://github.com/artefactual-labs/am/tree/master/compose
+  cd ../artefactual-labs
+  # Purposefully not doing un-necessary git submodule update --init --recursive
+  #git submodule update --init
+  git submodule update --init --recursive
+  cd -
+  
+  cat ../artefactual-labs/compose/docker-compose.yml | \
+    sed -e '/build:/d' \
+        -e '/context:/d' \
+        -e '/dockerfile:/d' \
+        > docker-compose.yml
+
   docker-compose config
   echo
 
@@ -115,20 +128,8 @@ function docker_compose_up {
   test -L etc || ln -s ../artefactual-labs/compose/etc .
   test -L Makefile || ln -s ../artefactual-labs/compose/Makefile .
   test -L ../src || cd .. && ln -s artefactual-labs/src . && cd -
-  cat ../artefactual-labs/compose/docker-compose.yml | \
-    sed -e '/build:/d' \
-        -e '/context:/d' \
-        -e '/dockerfile:/d' \
-        > docker-compose.yml
   #test -L src || ln -s ../artefactual-labs/src .
   
-  # Taken from https://github.com/artefactual-labs/am/tree/master/compose
-  cd ../artefactual-labs
-  # Purposefully not doing un-necessary git submodule update --init --recursive
-  #git submodule update --init
-  git submodule update --init --recursive
-  cd -
-
   # Integrate with amatica persistant storage mechanism for input and storage
   export AM_PIPELINE_DATA=${AMATICA_DAT_DIR}
   export SS_LOCATION_DATA=${AMATICA_INC_DIR}
