@@ -7,9 +7,6 @@
 
   # Only attribute from testshib.org really useable is EPPN
   shib_request_set $shib_eppn $upstream_http_variable_eppn;
-  shib_request_set $shib_eppn $upstream_http_variable_sn;
-  shib_request_set $shib_eppn $upstream_http_variable_mail;
-  shib_request_set $shib_eppn $upstream_http_variable_givenname;
   fastcgi_param EPPN $shib_eppn;
   fastcgi_param SN $shib_eppn;
   fastcgi_param MAIL $shib_eppn;
