@@ -24,9 +24,15 @@ cd $SETUP_DIR
 
 GIVENIP=$1
 HOSTIP=$1
-PERSISTANT_DIR=${2:-/tmp/amatica/persistant}
-LOGGING_DIR=${3:-/tmp/amatica/log}
-RUN_MODE=$4
+PERSISTANT_DIR=${2:-/tmp/amatica}
+RUN_MODE=$3
+
+# Shibboleth attributes to use
+SHIB_UID=${SHIB_UID:-\$shib_eppn}
+SHIB_LNAME=${SHIB_LNAME:-\'LastName\'}
+SHIB_FNAME=${SHIB_FNAME:-\'FirstName\'}
+SHIB_CNAME=${SHIB_CNAME:-\'FirstName LastName\'}
+SHIB_MAIL=${SHIB_MAIL:-\$shib_eppn}
 
 if [ "$HOSTIP" = "" ]; then
   HOSTIP=`hostname -I 2>&1 | perl -ne '@ip = grep( !/^(192.168|10|172.[1-3]\d)./, split(/\s/)); print join("|",@ip)'`
@@ -184,6 +190,11 @@ function sed_file {
   cp -v "$SRCFILE" "$DSTFILE"
   sed -i \
       -e "s|{PUBLICIP}|$HOSTIP|g" \
+      -e "s|{SHIB_UID}|$SHIB_UID|g" \
+      -e "s|{SHIB_LNAME}|$SHIB_LNAME|g" \
+      -e "s|{SHIB_FNAME}|$SHIB_FNAME|g" \
+      -e "s|{SHIB_CNAME}|$SHIB_CNAME|g" \
+      -e "s|{SHIB_MAIL}|$SHIB_MAIL|g" \
       "$DSTFILE"
 }
 

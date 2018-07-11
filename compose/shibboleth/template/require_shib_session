@@ -7,15 +7,20 @@
 
   # Only attribute from testshib.org really useable is EPPN
   shib_request_set $shib_eppn $upstream_http_variable_eppn;
-  fastcgi_param EPPN $shib_eppn;
-  fastcgi_param SN $shib_eppn;
-  fastcgi_param MAIL $shib_eppn;
-  fastcgi_param GIVENNAME $shib_eppn;
-  fastcgi_param HTTP_SN $shib_eppn;
-  fastcgi_param HTTP_MAIL $shib_eppn;
-  fastcgi_param HTTP_GIVENNAME $shib_eppn;
+  shib_request_set $shib_uid $upstream_http_variable_uid;
+  shib_request_set $shib_cn $upstream_http_variable_cn;
+  shib_request_set $shib_sn $upstream_http_variable_sn;
+  shib_request_set $shib_givenname $upstream_http_variable_givenname;
+  shib_request_set $shib_mail $upstream_http_variable_mail;
+  
+  # Filesender uses fastcgi_param 
+  fastcgi_param HTTP_UID {SHIB_UID};
+  fastcgi_param HTTP_CN {SHIB_CNAME};
+  fastcgi_param HTTP_MAIL {SHIB_MAIL};
 
-  # Enable to spoof or quickly test filesender with shibboleth authentication
-  #fastcgi_param HTTP_SHIB_CN 'Test User';
-  #fastcgi_param HTTP_SHIB_UID 'test_username';
-  #fastcgi_param HTTP_SHIB_MAIL 'test_user@abcde.edu';
+  # Archivematica uses proxy_set_header
+  proxy_set_header eppn {SHIB_UID};
+  proxy_set_header givenname {SHIB_FNAME};
+  proxy_set_header sn {SHIB_LNAME};
+  proxy_set_header mail {SHIB_MAIL};
+  proxy_set_header entitlement 'preservation-admin';

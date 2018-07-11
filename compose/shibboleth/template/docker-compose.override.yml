@@ -13,6 +13,11 @@ services:
       - 80:80
       - 443:443
       - 8089:8089
+    environment:
+      - MAIL_ATTR=${SHIB_MAIL_ATTR:-$shib_eppn}
+      - FNAME_ATTR=${SHIB_FNAME_ATTR:-FirstName}
+      - LNAME_ATTR=${SHIB_LNAME_ATTR:-LastName}
+      - UID_ATTR=${SHIB_UID_ATTR:-$shib_eppn}
     volumes:
       - run.php:/run/php
       - run.shibboleth:/run/shibboleth
@@ -39,9 +44,9 @@ services:
       - FILESENDER_LOGOUT_URL=${FILESENDER_LOGOUT_URL:-https://{PUBLICIP}}
       - FILESENDER_STORAGE=${FILESENDER_STORAGE:-FilesystemPreserveName}
       - FILESENDER_AUTHTYPE=${FILESENDER_AUTHTYPE:-shibboleth}
-      - MAIL_ATTR=${FILESENDER_MAIL_ATTR:-EPPN}
-      - NAME_ATTR=${FILESENDER_NAME_ATTR:-EPPN}
-      - UID_ATTR=${FILESENDER_UID_ATTR:-EPPN}
+      - MAIL_ATTR=${FILESENDER_MAIL_ATTR:-HTTP_MAIL}
+      - NAME_ATTR=${FILESENDER_NAME_ATTR:-HTTP_CN}
+      - UID_ATTR=${FILESENDER_UID_ATTR:-HTTP_UID}
       - CHOWN_WWW=${FILESENDER_CHOWN_WWW:-333:333}
       - DB_HOST=${FILESENDER_DB_HOST:-mysql}
       - DB_NAME=${FILESENDER_DB_NAME:-filesender}
