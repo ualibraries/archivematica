@@ -108,6 +108,15 @@ function docker_compose_up {
   docker-compose config
   echo
 
+  # Update the shibboleth attributes used:
+  sed -i \
+      -e 's/HTTP_EPPN/HTTP_SHIB_UID/g' \
+      -e 's/HTTP_GIVENNAME/HTTP_SHIB_GIVENNAME/g' \
+      -e 's/HTTP_SN/HTTP_SHIB_SN/g' \
+      -e 's/HTTP_MAIL/HTTP_SHIB_MAIL/g' \
+      -e 's/HTTP_ENTITLEMENT/HTTP_SHIB_ENTITLEMENT/g' \
+      ../src/archivematica/src/dashboard/src/settings/components/shibboleth_auth.py
+  
   # setup softlinks so commands below will work:
   test -L etc || ln -s ../artefactual-labs/compose/etc .
   test -L Makefile || ln -s ../artefactual-labs/compose/Makefile .

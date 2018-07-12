@@ -14,13 +14,14 @@
   shib_request_set $shib_mail $upstream_http_variable_mail;
   
   # Filesender uses fastcgi_param 
-  fastcgi_param HTTP_UID {SHIB_UID};
-  fastcgi_param HTTP_CN {SHIB_CNAME};
-  fastcgi_param HTTP_MAIL {SHIB_MAIL};
+  fastcgi_param HTTP_SHIB_UID {SHIB_UID};
+  fastcgi_param HTTP_SHIB_CN {SHIB_CNAME};
+  fastcgi_param HTTP_SHIB_MAIL {SHIB_MAIL};
 
   # Archivematica uses proxy_set_header
-  proxy_set_header eppn {SHIB_UID};
-  proxy_set_header givenname {SHIB_FNAME};
-  proxy_set_header sn {SHIB_LNAME};
-  proxy_set_header mail {SHIB_MAIL};
-  proxy_set_header entitlement 'preservation-admin';
+  proxy_set_header shib-eppn {SHIB_UID};
+  proxy_set_header shib-uid {SHIB_UID};
+  proxy_set_header shib-givenname {SHIB_FNAME};
+  proxy_set_header shib-sn {SHIB_LNAME};
+  proxy_set_header shib-mail {SHIB_MAIL};
+  proxy_set_header shib-entitlement 'preservation-admin';
