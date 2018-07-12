@@ -29,7 +29,7 @@ services:
       - ${NGINX_LOG_DIR:-./log/nginx}:/var/log/nginx
 
   fpm:
-    image: 'uazlibraries/filesender-phpfpm:2.0-rc1'
+    image: 'uazlibraries/filesender-phpfpm:devel'
     restart: always
     links:
       - mysql
