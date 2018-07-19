@@ -103,6 +103,7 @@ function docker_compose_up {
     sed -e '/build:/d' \
         -e '/context:/d' \
         -e '/dockerfile:/d' \
+        -e '/\.\.\/src\//d' \
         > docker-compose.yml
 
   docker-compose config

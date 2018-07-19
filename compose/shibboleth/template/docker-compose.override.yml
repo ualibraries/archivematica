@@ -88,6 +88,7 @@ services:
       ARCHIVEMATICA_DASHBOARD_DASHBOARD_SHIBBOLETH_AUTHENTICATION: "true"
     volumes:
       - "archivematica_pipeline_data:/var/archivematica/sharedDirectory:rw"
+      - "./amatica/dashboard/src/dashboard/src/settings/components/shibboleth_auth.py:/src/dashboard/src/settings/components/shibboleth_auth.py"
       
   archivematica-storage-service:
     image: "uazlibraries/archivematica:storage-service-1.7.1"
