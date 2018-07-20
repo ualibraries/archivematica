@@ -5,8 +5,8 @@
 [submodule "docker/archivematica"]
 	path = docker/archivematica
 	url = https://github.com/artefactual/archivematica.git
-	branch = stable/1.7.x
+	branch = qa/1.x
 [submodule "docker/archivematica-storage-service"]
 	path = docker/archivematica-storage-service
 	url = https://github.com/artefactual/archivematica-storage-service.git
-	branch = master
+	branch = qa/0.x
