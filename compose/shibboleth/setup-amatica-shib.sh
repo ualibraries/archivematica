@@ -95,8 +95,8 @@ function docker_compose_up {
   # Taken from https://github.com/artefactual-labs/am/tree/master/compose
   cd ../artefactual-labs
   # Purposefully not doing un-necessary git submodule update --init --recursive
-  #git submodule update --init
-  git submodule update --init --recursive
+  git submodule update --init
+  #git submodule update --init --recursive
   cd -
   
   cat ../artefactual-labs/compose/docker-compose.yml | \
