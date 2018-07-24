@@ -6,7 +6,7 @@ services:
     restart: always
     tty: true
     links:
-      - "fpm"
+      - "filesender"
       - "nginx"
       - "shib"
     ports:
@@ -28,7 +28,7 @@ services:
       - ${SHIBBOLETH_ETC_DIR:-./shib/shibboleth}:/etc/shibboleth
       - ${NGINX_LOG_DIR:-./log/nginx}:/var/log/nginx
 
-  fpm:
+  filesender:
     image: 'uazlibraries/filesender-phpfpm:devel'
     restart: always
     links:
@@ -44,9 +44,9 @@ services:
       - FILESENDER_LOGOUT_URL=${FILESENDER_LOGOUT_URL:-https://{PUBLICIP}}
       - FILESENDER_STORAGE=${FILESENDER_STORAGE:-FilesystemPreserveName}
       - FILESENDER_AUTHTYPE=${FILESENDER_AUTHTYPE:-shibboleth}
-      - MAIL_ATTR=${FILESENDER_MAIL_ATTR:-HTTP_SHIB_MAIL}
-      - NAME_ATTR=${FILESENDER_NAME_ATTR:-HTTP_SHIB_CN}
-      - UID_ATTR=${FILESENDER_UID_ATTR:-HTTP_SHIB_UID}
+      - MAIL_ATTR=${FILESENDER_MAIL_ATTR:-SHIB_MAIL}
+      - NAME_ATTR=${FILESENDER_NAME_ATTR:-SHIB_CN}
+      - UID_ATTR=${FILESENDER_UID_ATTR:-SHIB_UID}
       - CHOWN_WWW=${FILESENDER_CHOWN_WWW:-333:333}
       - DB_HOST=${FILESENDER_DB_HOST:-mysql}
       - DB_NAME=${FILESENDER_DB_NAME:-filesender}
