@@ -72,17 +72,17 @@ services:
       - ${AMATICA_DAT_DIR:-am-pipeline-data}:/var/archivematica
 
   archivematica-mcp-server:
-    image: "uazlibraries/archivematica:mcp-server-1.7.1"
+    image: "uazlibraries/archivematica:mcp-server-1.7.1-1"
     volumes:
       - "archivematica_pipeline_data:/var/archivematica/sharedDirectory:rw"
 
   archivematica-mcp-client:
-    image: "uazlibraries/archivematica:mcp-client-1.7.1"
+    image: "uazlibraries/archivematica:mcp-client-1.7.1-1"
     volumes:
       - "archivematica_pipeline_data:/var/archivematica/sharedDirectory:rw"
 
   archivematica-dashboard:
-    image: "uazlibraries/archivematica:dashboard-1.7.1"
+    image: "uazlibraries/archivematica:dashboard-1.7.1-1"
     environment:
       SS_SHIBBOLETH_AUTHENTICATION: "true"
       ARCHIVEMATICA_DASHBOARD_DASHBOARD_SHIBBOLETH_AUTHENTICATION: "true"
@@ -91,7 +91,7 @@ services:
       - "./amatica/dashboard/src/dashboard/src/settings/components/shibboleth_auth.py:/src/dashboard/src/settings/components/shibboleth_auth.py"
       
   archivematica-storage-service:
-    image: "uazlibraries/archivematica:storage-service-1.7.1"
+    image: "uazlibraries/archivematica:storage-service-1.7.1-1"
     environment:
       SS_SHIBBOLETH_AUTHENTICATION: "true"
     volumes:

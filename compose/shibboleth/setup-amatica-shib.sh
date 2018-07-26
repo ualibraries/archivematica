@@ -24,7 +24,7 @@ cd $SETUP_DIR
 
 GIVENIP=$1
 HOSTIP=$1
-PERSISTANT_DIR=${2:-/tmp/amatica}
+PERSISTANT_DIR=${2:-./persistant}
 RUN_MODE=$3
 
 # Shibboleth attributes to use
