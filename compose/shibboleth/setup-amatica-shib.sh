@@ -1,5 +1,5 @@
 #!/bin/bash
-set -x
+#set -x
 
 REQUIRED="hostname perl sed openssl docker-compose nc curl id /usr/sbin/addgroup /usr/sbin/adduser"
 
@@ -26,6 +26,7 @@ GIVENIP=$1
 HOSTIP=$1
 PERSISTANT_DIR=${2:-./persistant}
 RUN_MODE=$3
+UPGRADE_MODE=""
 
 # Shibboleth attributes to use
 SHIB_UID=${SHIB_UID:-\$shib_eppn}
@@ -50,47 +51,76 @@ if [ "$OCTETS" != "4" ]; then
 fi
 fi
 
+#function create_persistant_dirs {
+
 # Ensure archivematica users exist
-USER_LIST="_shibd elasticsearch gearman nginx clamav mysql archivematica"
-USER_ID=799
-USER_INC=0
+#USER_LIST="_shibd elasticsearch gearman nginx clamav mysql archivematica"
+#USER_ID=799
+#USER_INC=0
+#
+#for USER in $USER_LIST; do
+#  #sudo deluser --remove-home $USER
+#  if [ "`id $USER 2>/dev/null`" = "" ]; then
+#    echo "CREATEUSER: $USER with uid:gid $USER_ID:$USER_ID"
+#    sudo addgroup $USER --force-badname --gid $USER_ID
+#    sudo adduser --system $USER --force-badname --uid $USER_ID --gid $USER_ID --home /var/lib/$USER --shell /bin/false
+#  fi
+#  if [ ! -d "$PERSISTANT_DIR/$USER" ]; then
+#    mkdir -vp "$PERSISTANT_DIR/$USER"
+#    sudo chown $USER.$USER "$PERSISTANT_DIR/$USER"
+#  fi
+#  let USER_ID=$((++USER_INC + 327))
+#done
 
-for USER in $USER_LIST; do
-  #sudo deluser --remove-home $USER
-  if [ "`id $USER 2>/dev/null`" = "" ]; then
-    echo "CREATEUSER: $USER with uid:gid $USER_ID:$USER_ID"
-    sudo addgroup $USER --force-badname --gid $USER_ID
-    sudo adduser --system $USER --force-badname --uid $USER_ID --gid $USER_ID --home /var/lib/$USER --shell /bin/false
+  # Calculate to see if we are running in UPGRADE_MODE or not while checking
+  # if we need to create persistant directories or not.
+  # Basically assume we are because this is the safe route for production
+  # systems.
+
+  if [ "$2xx" = "xx" ] && [ -f "$SETUP_DIR/.env" ]; then
+    . "$SETUP_DIR/.env"
   fi
-  if [ ! -d "$PERSISTANT_DIR/$USER" ]; then
-    mkdir -vp "$PERSISTANT_DIR/$USER"
-    sudo chown $USER.$USER "$PERSISTANT_DIR/$USER"
-  fi
-  let USER_ID=$((++USER_INC + 327))
-done
-
-# Ensure archivematica persistant dir exist
-AMATICA_LIST="filesender"
-USER=archivematica
-
-for AMATICA_DIR in $AMATICA_LIST; do
-  if [ ! -d "$PERSISTANT_DIR/$AMATICA_DIR" ]; then
-    sudo mkdir -vp "$PERSISTANT_DIR/$AMATICA_DIR"
-    sudo chown $USER.$USER "$PERSISTANT_DIR/$AMATICA_DIR"
-  fi
-done
-
-function docker_compose_up {
-  echo "CREATING docker containers in background with configuration saved in $SETUP_DIR/.env"
-  echo
+  
   export ELASTIC_DAT_DIR=${ELASTIC_DAT_DIR:-"$PERSISTANT_DIR/elasticsearch"}
-  export GEARMAN_DAT_DIR=${GEARMAN_DAT_DIR:-"$PERSISTANT_DIR/gearman"}
   export CLAMAV_DAT_DIR=${CLAMAV_DAT_DIR:-"$PERSISTANT_DIR/clamav"}
   export AMATICA_INC_DIR=${AMATICA_INC_DIR:-"$PERSISTANT_DIR/filesender"}
   export AMATICA_DAT_DIR=${AMATICA_DAT_DIR:-"$PERSISTANT_DIR/archivematica"}
   export MYSQL_DAT_DIR=${MYSQL_DAT_DIR:-"$PERSISTANT_DIR/mysql"}
 
+# Ensure archivematica persistant dirs exist
+AMATICA_LIST="\
+$ELASTIC_DAT_DIR \
+$CLAMAV_DAT_DIR \
+$AMATICA_INC_DIR \
+$AMATICA_DAT_DIR \
+$MYSQL_DAT_DIR"
+
+USER=archivematica
+
+for AMATICA_DIR in $AMATICA_LIST; do
+  if [ -e "$AMATICA_DIR" ] && [ ! -d "$AMATICA_DIR" ]; then
+    echo "ERROR: persistant path $AMATICA_DIR exists and is not a directory."
+    echo "ERROR: please correct this and re-run the script. Exiting"
+    exit 1
+  fi
+  
+  if [ ! -d "$AMATICA_DIR" ]; then
+    sudo mkdir -vp "$AMATICA_DIR"
+    #sudo chown $USER.$USER "$PERSISTANT_DIR/$AMATICA_DIR"
+  else
+    if [ "`ls -A $AMATICA_DIR`" ]; then
+      UPGRADE_MODE="true"
+    fi
+  fi
+done
+
   printenv | grep -e "AMATICA\|NGINX\|FILESENDER\|SMTP_\|MYSQL_\|DAT_DIR\|LOG_DIR\|ETC_DIR" | sort > "$SETUP_DIR/.env"
+  
+#}
+
+function docker_compose_up {
+  echo "CREATING docker containers in background with configuration saved in $SETUP_DIR/.env"
+  echo
   
   # Taken from https://github.com/artefactual-labs/am/tree/master/compose
   cd ../artefactual-labs
@@ -106,7 +136,7 @@ function docker_compose_up {
         -e '/\.\.\/src\//d' \
         > docker-compose.yml
 
-  docker-compose config
+  #docker-compose config
   echo
 
   # Update the shibboleth attributes used:
@@ -116,7 +146,7 @@ function docker_compose_up {
       -e 's/HTTP_SN/HTTP_SHIB_SN/g' \
       -e 's/HTTP_MAIL/HTTP_SHIB_MAIL/g' \
       -e 's/HTTP_ENTITLEMENT/HTTP_SHIB_ENTITLEMENT/g' \
-      ../src/archivematica/src/dashboard/src/settings/components/shibboleth_auth.py
+      ../artefactual-labs/src/archivematica/src/dashboard/src/settings/components/shibboleth_auth.py
   
   # setup softlinks so commands below will work:
   test -L etc || ln -s ../artefactual-labs/compose/etc .
@@ -128,7 +158,7 @@ function docker_compose_up {
   export AM_PIPELINE_DATA=${AMATICA_DAT_DIR}
   export SS_LOCATION_DATA=${AMATICA_INC_DIR}
 
-  # Add our own persistant storage for mysql and elasticsearch
+  # Add our own persistant storage for mysql, elasticsearch, and clamav
   docker volume create --opt type=none --opt o=bind --opt device=${MYSQL_DAT_DIR} am-mysql-data
   docker volume create --opt type=none --opt o=bind --opt device=${ELASTIC_DAT_DIR} am-elasticsearch-data
   docker volume create --opt type=none --opt o=bind --opt device=${CLAMAV_DAT_DIR} am-clamav-data
@@ -136,9 +166,21 @@ function docker_compose_up {
   make create-volumes
   docker-compose build web
   docker-compose build shib
+  docker-compose up -d mysql
+  timeout 10 docker-compose logs --follow
   docker-compose up -d
-  timeout 60 docker-compose logs --follow
-  make bootstrap
+  timeout 20 docker-compose logs --follow
+  if [ "xx$UPGRADE_MODE" = "xx" ]; then
+    echo "RUNNING a fresh install"
+    make bootstrap
+  else
+    echo "RUNNING an upgrade"
+    make manage-ss ARG="migrate --noinput"
+    docker-compose restart archivematica-storage-service
+    make manage-dashboard ARG="migrate --noinput"
+    make bootstrap-dashboard-frontend
+  fi
+  
   make restart-am-services
 }
 
@@ -147,6 +189,7 @@ METADATA_FILE="docker-filesender-phpfpm-shibboleth-$HOSTIP-metadata.xml"
 
 if [ -f "$METADATA_FILE" ]; then
   if [ "`docker ps -a | grep archivematica`" = "" ]; then
+    #create_persistant_dirs
     docker_compose_up
   fi
 else
@@ -221,6 +264,7 @@ echo "CONFIGURING docker-compose"
 sed_file template/docker-compose.override.yml docker-compose.override.yml
 
 if [ "$RUN_MODE" != "config_only" ]; then
+  #create_persistant_dirs
   docker_compose_up
   
   echo
