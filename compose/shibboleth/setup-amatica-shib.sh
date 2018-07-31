@@ -24,9 +24,16 @@ cd $SETUP_DIR
 
 GIVENIP=$1
 HOSTIP=$1
-PERSISTANT_DIR=${2:-./persistant}
+PERSISTANT_DIR=${2:-$SETUP_DIR/persistant}
 RUN_MODE=$3
 UPGRADE_MODE=""
+
+if [ "$GIVENIP" = "cleanup" ] || [ "$RUN_MODE" = "cleanup" ]; then
+  docker-compose rm -fsv
+  docker volume prune -f
+  docker volume rm am-clamav-data am-elasticsearch-data am-mysql-data am-pipeline-data ss-location-data
+  exit 0
+fi
 
 # Shibboleth attributes to use
 SHIB_UID=${SHIB_UID:-\$shib_eppn}
