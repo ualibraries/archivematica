@@ -32,7 +32,8 @@ services:
     image: 'uazlibraries/filesender-phpfpm:devel'
     restart: always
     links:
-      - mysql
+      - "mysql"
+      - "archivematica-storage-service"
     environment:
       - SMTP_SERVER=${SMTP_SERVER:-smtp.gmail.com:587}
       - SMTP_TLS=${SMTP_TLS:-true}
@@ -92,8 +93,6 @@ services:
       
   archivematica-storage-service:
     image: "uazlibraries/archivematica:storage-service-1.7.1-1"
-    links:
-      - "filesender"
     environment:
       SS_SHIBBOLETH_AUTHENTICATION: "true"
     volumes:

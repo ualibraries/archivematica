@@ -27,11 +27,20 @@ HOSTIP=$1
 PERSISTANT_DIR=${2:-$SETUP_DIR/persistant}
 RUN_MODE=$3
 UPGRADE_MODE=""
+CLEAN_MODE=""
 
-if [ "$GIVENIP" = "cleanup" ] || [ "$RUN_MODE" = "cleanup" ]; then
-  docker-compose rm -fsv
-  docker volume prune -f
+# Check if we are doing a cleanup
+
+for VAR in "$@"; do
+  if [ "`echo -n $VAR | grep -i '^clean'`" != "" ]; then
+     CLEAN_MODE="true"
+  fi
+done
+
+if [ "$CLEAN_MODE" = "true" ]; then
+  docker-compose down --volumes --remove-orphans --rmi local
   docker volume rm am-clamav-data am-elasticsearch-data am-mysql-data am-pipeline-data ss-location-data
+  rm -fv .env docker-filesender-phpfpm-shibboleth-*-metadata.xml
   exit 0
 fi
 
@@ -176,7 +185,7 @@ function docker_compose_up {
   docker-compose up -d mysql
   timeout 10 docker-compose logs --follow
   docker-compose up -d
-  timeout 20 docker-compose logs --follow
+  #timeout 20 docker-compose logs --follow
   if [ "xx$UPGRADE_MODE" = "xx" ]; then
     echo "RUNNING a fresh install"
     make bootstrap
@@ -187,8 +196,9 @@ function docker_compose_up {
     make manage-dashboard ARG="migrate --noinput"
     make bootstrap-dashboard-frontend
   fi
-  
-  make restart-am-services
+    make restart-am-services
+    docker rm -f shibboleth_filesender_1
+    docker-compose up -d
 }
 
 METADATA_URL="https://$HOSTIP/Shibboleth.sso/Metadata"
