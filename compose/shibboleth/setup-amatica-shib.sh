@@ -130,7 +130,11 @@ for AMATICA_DIR in $AMATICA_LIST; do
   fi
 done
 
-  printenv | grep -e "AMATICA\|NGINX\|FILESENDER\|SMTP_\|MYSQL_\|DAT_DIR\|LOG_DIR\|ETC_DIR" | sort > "$SETUP_DIR/.env"
+if [ "$RUN_MODE" = "fresh_install" ]; then
+  UPGRADE_MODE=""
+fi
+
+printenv | grep -e "AMATICA\|NGINX\|FILESENDER\|SMTP_\|MYSQL_\|DAT_DIR\|LOG_DIR\|ETC_DIR" | sort > "$SETUP_DIR/.env"
   
 #}
 
