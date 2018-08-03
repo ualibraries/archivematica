@@ -56,7 +56,7 @@ services:
     volumes:
       - run.php:/run/php
       - ${FILESENDER_LOG_DIR:-./log/fpm}:/var/log/php-fpm
-      - "archivematica_storage_service_location_data:/data:rw"
+      - ${FILESENDER_DAT_DIR:-archivematica_storage_service_location_data}:/data:rw
       - filesender:/opt/filesender
       - simplesaml:/opt/simplesamlphp
 
