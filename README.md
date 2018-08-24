@@ -9,34 +9,15 @@
 
 ## Introduction
 
-Archivematica built from artifactual sources. This [1.7.x series](https://github.com/artefactual-labs/am/blob/master/compose/README.md) was designed from the ground up to work with docker - each service has it's own container. Test2
+Archivematica built from artifactual docker images. This [1.7.x series](https://github.com/artefactual-labs/am/blob/master/compose/README.md) was designed from the ground up to work with docker - each service has it's own container.
 
-This docker image was built from archivematica's installation [instructions](https://www.archivematica.org/en/docs/archivematica-1.6/admin-manual/installation/installation/)
-
-This release has a [docker-compose example](https://github.com/ualibraries/archivematica/tree/1.6.1-beta3/compose/shibboleth) integrating with shibboleth to provide only security protection. The up-n-coming 1.7 release has some [examples](https://github.com/JiscRDSS/rdss-archivematica) of full shibboleth integration where user attributes are used in addition to the security protection.
+This release has a full [docker-compose example](https://github.com/ualibraries/archivematica/tree/1.7.1/compose/shibboleth) integration with shibboleth where its user attributes are used in addition to the security protection.
 
 ## Packaging
 
-Archivematica is a complex piece of software, and to create an all-in-one self-contained container the following packaging strategies were used:
+Archivematica is a complex piece of software. Since the 1.7.x or higher is designed to work with docker, the goal of the packaging is to add services in a complementary manner above and beyond what is provided by artefactual.
 
-### Two stage installation
-
-Archivematica creates database tables, pulls latest anti-virus rules, ie a number of tasks which require running instances of databases, which isn't possible when creating a docker image using a Dockerfile.
-
-This requires taking a two stage installation approach.
-
-The first stage, happening within the Dockerfile, accomplishes:
-
-1. Creation of required system users such as 'archivematica', 'nginx', 'mysql' so the uid:gid are well defined, and can be easily changed during docker creation to fit existing deployment setups. This also allows clean definition of docker volumes for root directories of these services.
-2. Install all pre-requisites used by the archivematica packages, including latest python pip installed libraries.
-3. Download, but not install, archivematica packages.
-
-The second stage, happening the first time an archivematica docker container instance is ran, accomplishes:
-
-1. Change uid:gid values of system users per CHOWN_<USER>=uid:gid environment variables via the script [chown-archivematica.sh](https://github.com/ualibraries/archivematica/blob/master/docker/chown-archivematica.sh). Within the container, the script is located at /usr/share/archivematica/docker/chown-archivematica.sh.
-2. Installation of mysql, elasticsearch, archivematica-storage, archivematica-server, archivematica-client, archivematica-dashboard through the script [setup-archivematica.sh](https://github.com/ualibraries/archivematica/blob/master/docker/setup-archivematica.sh). Within the container, the script is located at /usr/share/archivematica/docker/setup-archivematica.sh.
-3. Email the sysadmin when the second stage is complete, with a log of second stage installtion through the script [setup-log-archivematica.sh](https://github.com/ualibraries/archivematica/blob/master/docker/setup-log-archivematica.sh). Within the container, the script is located at /usr/share/archivematica/docker/setup-log-archivematica.sh.
-4. Startup each of the services through the script [entrypoint-archivematica.sh](https://github.com/ualibraries/archivematica/blob/master/docker/service-archivematica.sh). Within the container, the script is located at /entrypoint-archivematica.sh.
+This is accomplished through [docker-compose override](https://docs.docker.com/compose/extends/) functionality. In addition, Artefactual does not provide docker images of archivematica release branches, so four archivematica service docker images are created from release branches: mcp-server, mcp-client, dashboard, and storage-service.
 
 ## Dependencies
 This docker image of archivematica requires the following environment dependencies:
@@ -44,7 +25,7 @@ This docker image of archivematica requires the following environment dependenci
 ### Host system dependencies
 1. [docker-compose](https://docs.docker.com/compose/overview/) is installed on the system.
 2. The host system's time synchronized with a master [ntp](https://en.wikipedia.org/wiki/Network_Time_Protocol) server.
-3. No other service on the system is listening at port 80 or 443. This can be changed through modifying the docker-compose configuration and files.
+3. No other service on the system is listening at port 80 or 443. This can be changed through modifying the docker-compose configuration and files. If installing on a cloud system, then the ports 80 and 443 need to be opened up.
 4. A public IP address if using shibboleth authentication. For production deployments, having nginx using an ssl cert associated with a public DNS entry is the ideal situation.
 5. For production deployments, planned disk capacity for both uploaded files and the storage capacity for processed AIPs and DIPs.
 
