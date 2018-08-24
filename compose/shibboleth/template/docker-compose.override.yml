@@ -1,32 +1,89 @@
 version: '2.1'
 
+volumes:
+  mysql_data:
+    external:
+      name: "am-mysql-data"
+  elasticsearch_data:
+    external:
+      name: "am-elasticsearch-data"
+  clamav_data:
+    external:
+      name: "am-clamav-data"
+  run.php:
+  run.shibboleth:
+  filesender:
+  simplesaml:
+
 services:
-  web:
-    build: ./web
+  mysql:
     restart: always
-    tty: true
-    links:
-      - "filesender"
-      - "nginx"
-      - "shib"
-    ports:
-      - 80:80
-      - 443:443
-      - 8089:8089
-    environment:
-      - MAIL_ATTR=${SHIB_MAIL_ATTR:-$shib_eppn}
-      - FNAME_ATTR=${SHIB_FNAME_ATTR:-FirstName}
-      - LNAME_ATTR=${SHIB_LNAME_ATTR:-LastName}
-      - UID_ATTR=${SHIB_UID_ATTR:-$shib_eppn}
     volumes:
-      - run.php:/run/php
+      - "./mysql/create-filesender-db.sql:/docker-entrypoint-initdb.d/create-filesender-db.sql"
+
+  elasticsearch:
+    restart: always
+  
+  redis:
+    restart: always
+    
+  gearmand:
+    restart: always
+    
+  fits:
+    restart: always
+    
+  clamavd:
+    restart: always
+    volumes:
+      - "clamav_data:/var/lib/clamav"
+      
+  nginx:
+    restart: always
+    
+  archivematica-mcp-server:
+    image: "uazlibraries/archivematica:mcp-server-1.7.1-1"
+    restart: always
+    volumes:
+      - "archivematica_pipeline_data:/var/archivematica/sharedDirectory:rw"
+
+  archivematica-mcp-client:
+    image: "uazlibraries/archivematica:mcp-client-1.7.1-1"
+    restart: always
+    volumes:
+      - "archivematica_pipeline_data:/var/archivematica/sharedDirectory:rw"
+
+  archivematica-dashboard:
+    image: "uazlibraries/archivematica:dashboard-1.7.1-1"
+    restart: always
+    environment:
+      SS_SHIBBOLETH_AUTHENTICATION: "true"
+      ARCHIVEMATICA_DASHBOARD_DASHBOARD_SHIBBOLETH_AUTHENTICATION: "true"
+    volumes:
+      - "archivematica_pipeline_data:/var/archivematica/sharedDirectory:rw"
+      - "./amatica/dashboard/src/dashboard/src/settings/components/shibboleth_auth.py:/src/dashboard/src/settings/components/shibboleth_auth.py"
+      
+  archivematica-storage-service:
+    image: "uazlibraries/archivematica:storage-service-1.7.1-1"
+    restart: always
+    environment:
+      SS_SHIBBOLETH_AUTHENTICATION: "true"
+    volumes:
+      - "archivematica_pipeline_data:/var/archivematica/sharedDirectory:rw"
+      - "archivematica_storage_service_staging_data:/var/archivematica/storage_service:rw"
+      - "archivematica_storage_service_location_data:/home:rw"
+            
+  shib:
+    build: ./shib
+    restart: always
+    volumes:
       - run.shibboleth:/run/shibboleth
-      - filesender:/opt/filesender
-      - simplesaml:/opt/simplesamlphp
-      - ${NGINX_ICON_DIR:-./web/icon}:/opt/brand
-      - ${NGINX_ETC_DIR:-./web/nginx/conf.d}:/etc/nginx/conf.d
       - ${SHIBBOLETH_ETC_DIR:-./shib/shibboleth}:/etc/shibboleth
-      - ${NGINX_LOG_DIR:-./log/nginx}:/var/log/nginx
+      - ${SUPERVISOR_ETC_DIR:-./shib/supervisor/conf.d}:/etc/supervisor/conf.d
+      - ${SUPERVISOR_DAT_DIR:-./shib/dip-display}:/opt/dip-display
+      - ${SHIBBOLETH_LOG_DIR:-./log/shibboleth}:/var/log/shibboleth
+      - ${SUPERVISOR_LOG_DIR:-./log/supervisor}:/var/log/supervisor
+      - ${AMATICA_DAT_DIR:-am-pipeline-data}:/var/archivematica
 
   filesender:
     image: 'uazlibraries/filesender-phpfpm:devel'
@@ -60,65 +117,30 @@ services:
       - filesender:/opt/filesender
       - simplesaml:/opt/simplesamlphp
 
-  shib:
-    build: ./shib
+  web:
+    build: ./web
     restart: always
+    tty: true
+    links:
+      - "filesender"
+      - "nginx"
+      - "shib"
+    ports:
+      - 80:80
+      - 443:443
+      - 8089:8089
+    environment:
+      - MAIL_ATTR=${SHIB_MAIL_ATTR:-$shib_eppn}
+      - FNAME_ATTR=${SHIB_FNAME_ATTR:-FirstName}
+      - LNAME_ATTR=${SHIB_LNAME_ATTR:-LastName}
+      - UID_ATTR=${SHIB_UID_ATTR:-$shib_eppn}
     volumes:
+      - run.php:/run/php
       - run.shibboleth:/run/shibboleth
+      - filesender:/opt/filesender
+      - simplesaml:/opt/simplesamlphp
+      - ${NGINX_ICON_DIR:-./web/icon}:/opt/brand
+      - ${NGINX_ETC_DIR:-./web/nginx/conf.d}:/etc/nginx/conf.d
       - ${SHIBBOLETH_ETC_DIR:-./shib/shibboleth}:/etc/shibboleth
-      - ${SUPERVISOR_ETC_DIR:-./shib/supervisor/conf.d}:/etc/supervisor/conf.d
-      - ${SUPERVISOR_DAT_DIR:-./shib/dip-display}:/opt/dip-display
-      - ${SHIBBOLETH_LOG_DIR:-./log/shibboleth}:/var/log/shibboleth
-      - ${SUPERVISOR_LOG_DIR:-./log/supervisor}:/var/log/supervisor
-      - ${AMATICA_DAT_DIR:-am-pipeline-data}:/var/archivematica
+      - ${NGINX_LOG_DIR:-./log/nginx}:/var/log/nginx
 
-  archivematica-mcp-server:
-    image: "uazlibraries/archivematica:mcp-server-1.7.1-1"
-    volumes:
-      - "archivematica_pipeline_data:/var/archivematica/sharedDirectory:rw"
-
-  archivematica-mcp-client:
-    image: "uazlibraries/archivematica:mcp-client-1.7.1-1"
-    volumes:
-      - "archivematica_pipeline_data:/var/archivematica/sharedDirectory:rw"
-
-  archivematica-dashboard:
-    image: "uazlibraries/archivematica:dashboard-1.7.1-1"
-    environment:
-      SS_SHIBBOLETH_AUTHENTICATION: "true"
-      ARCHIVEMATICA_DASHBOARD_DASHBOARD_SHIBBOLETH_AUTHENTICATION: "true"
-    volumes:
-      - "archivematica_pipeline_data:/var/archivematica/sharedDirectory:rw"
-      - "./amatica/dashboard/src/dashboard/src/settings/components/shibboleth_auth.py:/src/dashboard/src/settings/components/shibboleth_auth.py"
-      
-  archivematica-storage-service:
-    image: "uazlibraries/archivematica:storage-service-1.7.1-1"
-    environment:
-      SS_SHIBBOLETH_AUTHENTICATION: "true"
-    volumes:
-      - "archivematica_pipeline_data:/var/archivematica/sharedDirectory:rw"
-      - "archivematica_storage_service_staging_data:/var/archivematica/storage_service:rw"
-      - "archivematica_storage_service_location_data:/home:rw"
-      
-  clamavd:
-    volumes:
-      - "clamav_data:/var/lib/clamav"
-      
-  mysql:
-    volumes:
-      - "./mysql/create-filesender-db.sql:/docker-entrypoint-initdb.d/create-filesender-db.sql"
-      
-volumes:
-  mysql_data:
-    external:
-      name: "am-mysql-data"
-  elasticsearch_data:
-    external:
-      name: "am-elasticsearch-data"
-  clamav_data:
-    external:
-      name: "am-clamav-data"
-  run.php:
-  run.shibboleth:
-  filesender:
-  simplesaml:
