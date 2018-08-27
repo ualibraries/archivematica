@@ -17,7 +17,7 @@ This release has a full [docker-compose example](https://github.com/ualibraries/
 
 Archivematica is a complex piece of software. Since the 1.7.x release or higher is designed to work with docker, the goal of the packaging is to add services in a complementary manner above and beyond what is provided by [Artefactual](https://www.artefactual.com/).
 
-This is accomplished through [docker-compose override](https://docs.docker.com/compose/extends/) functionality. In addition, Artefactual does not provide docker images of archivematica releases, so these are created from release branches via git submodules. The following [archivematica component docker images](https://hub.docker.com/r/uazlibraries/archivematica/) are built: mcp-server, mcp-client, dashboard, and storage-service.
+This is accomplished through [docker-compose override](https://docs.docker.com/compose/extends/) functionality. In addition, Artefactual does not provide docker images of archivematica releases, so these are created from code branches via git submodules using [Dockerfiles](https://github.com/artefactual/archivematica/tree/qa/1.x/src) provided by [artefactual for developers](https://github.com/artefactual-labs/am/tree/master/compose). The following [archivematica component docker images](https://hub.docker.com/r/uazlibraries/archivematica/) are built: mcp-server, mcp-client, dashboard, and storage-service.
 
 ## Dependencies
 This docker image of archivematica requires the following environment dependencies:
@@ -25,7 +25,7 @@ This docker image of archivematica requires the following environment dependenci
 ### Host system dependencies
 1. [docker-compose](https://docs.docker.com/compose/overview/) is installed on the system.
 2. The host system's time synchronized with a master [ntp](https://en.wikipedia.org/wiki/Network_Time_Protocol) server.
-3. No other service on the system is listening at port 80 or 443. This can be changed through modifying the docker-compose configuration and files. If installing on a cloud system, then the ports 80 and 443 need to be opened up.
+3. No other service on the system is listening at port 80 or 443. This can be changed through modifying the docker-compose configuration and files. If installing on a cloud system, ports 80 and 443 need to be opened up.
 4. A public IP address if using shibboleth authentication. For production deployments, having nginx using an ssl cert associated with a public DNS entry is the ideal situation.
 5. For production deployments, planned disk capacity for both uploaded files and the storage capacity for processed AIPs and DIPs.
 
@@ -75,28 +75,24 @@ These variables are set using the [setup-archivematica.sh](https://github.com/ua
 
 ### Persistant Mount Points
 
-Archivematica and it's dependant services have a number of directories that contain files which need to persist across upgrades for production deployments.
+Archivematica 1.7+ and it's dependant services have a number of [docker volumes](https://docs.docker.com/storage/volumes/) that contain files which need to persist across upgrades for production deployments.
 
-The following paths should be externally mounted to the filesystem, NAS, or a docker volume. Note that the service name's uid:gid is applied to all directories and files under the respective root because those services run as that uid:gid.
+The following is a suggestion of paths to mount to these volumes to ensure persistance.
 
-* /var/log - contains a number of service log files and directories. See the [logging](#logging) section for more details.
-* /var/lib/elasticsearch - contains persistance data for elasticsearch
-* /var/lib/gearman - contains persistance data for gearman
-* /var/lib/clamav - contains persistance data for clamav
-* /var/lib/mysql - contains persistance data for mysql
-* /home - the archivematica "incoming" directory for content that should get transferred into the system
-* /var/archivematica - the archivematica "storage" directory for content it has ingested. This includes by default the processed AIP and DIP content.
+* am-elasticsearch-data => /var/lib/elasticsearch - contains persistance data for elasticsearch
+* am-clamav-data => /var/lib/clamav - contains persistance data for clamav
+* am-mysql-data => /var/lib/mysql - contains persistance data for mysql
+* am-pipeline-data => /var/lib/archivematica - the archivematica "storage" directory for content it has ingested. This includes by default the processed AIP and DIP content.
+* ss-location-data => /home - the archivematica "incoming" directory for content that should get transferred into the system
 
 ### Logging
 
-Logging occurs under a number of subdirectories under /var/log/. Note the uid:gid permissions need to match those of the respective service logging to those dirs:
+All of the Archivematica 1.7 containers log to the standard docker logging facilities, so refer to documentation on [docker logging](https://docs.docker.com/config/containers/logging/) for more detail. To see the logging in real-time, go into the directory containing the docker-compose.yml file, and run the command:
 
-* archivematica/ - processing
-* elasticsearch/ - search
-* gearman/ - processing workflow
-* fits/    - image-procesing
-* clamav/  - anti-virus
-* nginx/   - web
+```
+docker-compose logs --follow
+
+```
 
 ## Deployment use cases
 
@@ -107,6 +103,7 @@ This docker image has been tested under the following deployment scanarios:
 3. [External mysql](https://github.com/ualibraries/archivematica/tree/1.6.1-beta4/compose/external_mysql)
 4. [External nginx](#external_nginx)
 5. [Filesender integration](#filesender)
+6. [Shibboleth integration](https://github.com/ualibraries/archivematica/tree/1.7.1/compose/shibboleth)
 
 ## Upgradeable
 
