@@ -17,7 +17,7 @@ This release has a full [docker-compose example](https://github.com/ualibraries/
 
 Archivematica is a complex piece of software. Since the 1.7.x release or higher is designed to work with docker, the goal of the packaging is to add services in a complementary manner above and beyond what is provided by [Artefactual](https://www.artefactual.com/).
 
-This is accomplished through [docker-compose override](https://docs.docker.com/compose/extends/) functionality. In addition, Artefactual does not provide docker images of archivematica releases, so these are created from code branches via git submodules using [Dockerfiles](https://github.com/artefactual/archivematica/tree/qa/1.x/src) provided by [artefactual for developers](https://github.com/artefactual-labs/am/tree/master/compose). The following [archivematica component docker images](https://hub.docker.com/r/uazlibraries/archivematica/) are built: mcp-server, mcp-client, dashboard, and storage-service.
+This is accomplished through [docker-compose override](https://docs.docker.com/compose/extends/) functionality. In addition, Artefactual does not provide docker images of archivematica releases, so these are created using [Dockerfiles](https://github.com/artefactual/archivematica/tree/qa/1.x/src) provided by [artefactual for developers](https://github.com/artefactual-labs/am/tree/master/compose). The following [docker images](https://hub.docker.com/r/uazlibraries/archivematica/builds/) are built: mcp-server, mcp-client, dashboard, and storage-service.
 
 ## Dependencies
 This docker image of archivematica requires the following environment dependencies:
