@@ -98,54 +98,24 @@ docker-compose logs --follow
 
 This docker image has been tested under the following deployment scanarios:
 
-1. [Throw-away self-contained test instance](https://github.com/ualibraries/archivematica/tree/1.6.1-beta4/compose/test_instance)
-2. [Self-contained instance, good across upgrades](#upgradeable)
-3. [External mysql](https://github.com/ualibraries/archivematica/tree/1.6.1-beta4/compose/external_mysql)
-4. [External nginx](#external_nginx)
-5. [Filesender integration](#filesender)
-6. [Shibboleth integration](https://github.com/ualibraries/archivematica/tree/1.7.1/compose/shibboleth)
+1. [Shibboleth integration](#shibboleth)
 
-## Upgradeable
+## Shibboleth
 
-This creates an archivematica instance that will keep state across upgrades. In order to accomplish this many service directories are externalized to the host system ( or could be put into a docker volume ). To ensure uid:gid services match across the host and docker image, a number of users need to be created on the host system.
+This creates an archivematica instance that will keep state across upgrades and uses shibboleth attributes for login.
 
-```
-`#!/bin/sh
-AMATICA_INCOMING_DIR=/mnt/archivematica-dev-home
-AMATICA_ELASTIC_DIR=/var/lib/elasticsearch
-AMATICA_PROCESS_DIR=/var/archivematica
-AMATICA_MYSQL_DIR=/var/lib/mysql
-AMATICA_LOG_DIR=/var/log/archivematica
+A script called [setup-amatica-shib.sh][https://github.com/ualibraries/archivematica/blob/1.7.1/compose/shibboleth/setup-amatica-shib.sh] is used which creates test HTTPS ssl certificates, a self-signed cert for shibboleth, the docker volumes used for persistance, and a number of other environment setups.
 
-if [ "`id archivematica 2>/dev/null`" = "" ]; then
-  sudo groupadd archivematica --gid 333
-  sudo useradd archivematica --uid 333 --gid 333 --create-home --home "$AMATICA_PROCESS_DIR" --shell /bin/false
-fi
+The script requires a public ip address for the shibboleth integration, a NAT internal IP will not work. Note you can use the public ip that your service provider has provided as long as port 80 and 443 are routed to the machine hosting the install.
 
-if [ "`id mysql 2>/dev/null`" = "" ]; then
-  sudo groupadd mysql --gid 332
-  sudo useradd mysql --uid 332 --gid 332 --create-home --home "$AMATICA_MYSQL_DIR" --shell /bin/false
-fi
-
-if [ "`id elasticsearch 2>/dev/null`" = "" ]; then
-  sudo groupadd elasticsearch --gid 328
-  sudo useradd elasticsearch --uid 328 --gid 328 --create-home --home "$AMATICA_ELASTIC_DIR" --shell /bin/false
-fi
-
-docker run -d \
-       --restart=unless-stopped \
-       -p 80:80 \
-       -p 8000:8000 \
-       -e SMTP_DOMAIN=abcd.edu \
-       -e SMTP_HOST=smtp.abcd.edu \
-       -e SMTP_FROM=archivematica-admin@abcd.edu \
-       -e SMTP_ADMIN=admin@abcd.edu \
-       -v $AMATICA_INCOMING_DIR:/home \
-       -v $AMATICA_ELASTIC_DIR:/var/lib/elasticsearch \
-       -v $AMATICA_PROCESS_DIR:/var/archivematica \
-       -v $AMATICA_MYSQL_DIR:/var/lib/mysql \
-       -v $AMATICA_LOG_DIR:/var/log \
-       --name amatica \
-       uazlibraries/archivematica:1.6.1-beta2
+To get an example up and running, use the following commands
 
 ```
+git clone -b 1.7.1 git@github.com:ualibraries/archivematica.git
+cd archivematica/compose/shibboleth
+./setup-amatica-shib.sh <public_ip>
+
+
+```
+
+follow the testshib.org registration instructions at end of install.
