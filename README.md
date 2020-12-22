@@ -1,4 +1,4 @@
-# Archivematica-docker
+# Archivematica-docker (Archived repository)
 
 - [Introduction](#introduction)
 - [Packaging Strategy](#packaging)
